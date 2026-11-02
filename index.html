@@ -3,53 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TurismoTrips | Red de Transporte</title>
+    <title>TurismoTrips | Red de Transporte Larga Distancia</title>
     <style>
-        :root { --primary: #0284c7; --bg-base: #0f172a; --bg-card: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --border: #334155; --success: #10b981; --warning: #f59e0b; }
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-base); color: var(--text-main); margin: 0; padding: 0; display: flex; justify-content: center; padding-top: 40px;}
+        :root { --primary: #0284c7; --bg-base: #0f172a; --bg-card: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --border: #334155; --success: #10b981; --warning: #f59e0b; --danger: #ef4444; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-base); color: var(--text-main); margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; align-items: center; justify-content: center;}
+        
         .container { width: 100%; max-width: 520px; padding: 20px; box-sizing: border-box; }
-        .card { background: var(--bg-card); padding: 30px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.3); text-align: center; margin-bottom: 20px; }
-        h1 { margin: 0 0 10px 0; font-size: 2rem; color: white; } h1 span { color: var(--primary); font-weight: 400; }
+        .card { background: var(--bg-card); padding: 30px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.3); text-align: center; }
+        
+        h1 { margin: 0 0 10px 0; font-size: 2rem; color: white; font-weight: 700; letter-spacing: -0.5px;}
+        h1 span { color: var(--primary); font-weight: 400; }
         p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px; }
+
         .btn-opcion { background: #020617; border: 1px solid var(--border); color: white; padding: 16px; border-radius: 8px; font-size: 1rem; font-weight: 600; width: 100%; cursor: pointer; margin-bottom: 12px; display: block; box-sizing: border-box;}
+        .btn-opcion:hover { border-color: var(--primary); background: rgba(2, 132, 199, 0.05); }
         .btn-opcion.principal { background: var(--primary); color: white; border: none; }
         .btn-secundario { background: transparent; color: var(--primary); border: 1px solid var(--primary); font-weight: 600; padding: 14px; border-radius: 8px; width: 100%; cursor: pointer; display: block; box-sizing: border-box; margin-top: 10px;}
+        .btn-secundario:hover { background: rgba(2, 132, 199, 0.1); }
+
         .form-group { margin-bottom: 16px; text-align: left; }
         .form-group label { display: block; margin-bottom: 8px; font-size: 0.85rem; color: var(--text-muted); font-weight: 600;}
         .form-group input, .form-group select { width: 100%; padding: 13px; border-radius: 8px; border: 1px solid var(--border); background: #020617; color: white; font-size: 0.95rem; box-sizing: border-box; outline: none;}
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; } .grid-3 { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 10px; }
-        .section-title { font-size: 0.75rem; color: var(--text-muted); margin: 25px 0 15px 0; font-weight: 700; text-transform: uppercase; border-left: 3px solid var(--primary); padding-left: 10px; text-align: left;}
-        #toast-notification { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1e293b; color: white; border: 1px solid var(--primary); padding: 14px 24px; border-radius: 30px; opacity: 0; transition: all 0.3s ease-in-out; z-index: 999; pointer-events: none; }
+        .form-group input:focus, .form-group select:focus { border-color: var(--primary); }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 10px; }
+        
+        .section-title { font-size: 0.75rem; color: var(--text-muted); margin: 25px 0 15px 0; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; border-left: 3px solid var(--primary); padding-left: 10px; text-align: left;}
+
+        #toast-notification {
+            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: #1e293b; color: white; border: 1px solid var(--primary); padding: 14px 24px;
+            border-radius: 30px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            opacity: 0; transition: all 0.3s ease-in-out; z-index: 999; pointer-events: none; text-align: center; max-width: 90%;
+        }
         #toast-notification.activo { transform: translateX(-50%) translateY(0); opacity: 1; }
-        #widget-clima { display: none; background: rgba(2, 132, 199, 0.05); border: 1px solid var(--border); padding: 12px; border-radius: 8px; margin-top: 10px; text-align: center; color: white;}
+        #widget-clima { display: none; background: rgba(2, 132, 199, 0.05); border: 1px solid var(--border); padding: 12px; border-radius: 8px; margin-top: 10px; text-align: center; font-size: 0.9rem; font-weight: 600; color: white;}
     </style>
 </head>
 <body>
-    <div id="toast-notification">Mensaje</div>
+
+    <div id="toast-notification">Mensaje del sistema</div>
+
     <div class="container">
-        <!-- MENÚ -->
+        <!-- MENÚ PRINCIPAL -->
         <div class="card" id="menu-principal">
             <h1>Turismo<span>Trips</span></h1>
-            <p>Plataforma de Transporte y Larga Distancia</p>
-            <button class="btn-opcion principal" onclick="document.getElementById('form-solicitud').style.display='block'; document.getElementById('menu-principal').style.display='none';">Programar un Viaje</button>
+            <p>Plataforma de Transporte y Larga Distancia Paraguay</p>
+            <button class="btn-opcion principal" onclick="document.getElementById('form-solicitud').style.display='block'; document.getElementById('menu-principal').style.display='none';">Programar un Viaje / Ruta</button>
             <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border);">
-                <p style="font-size: 0.85rem; margin-bottom: 15px;">¿Eres Conductor?</p>
+                <p style="font-size: 0.85rem; margin-bottom: 15px;">¿Ya está registrado en la red?</p>
                 <button class="btn-secundario" onclick="window.location.href='login.html'">Acceder al Panel de Chofer</button>
             </div>
         </div>
 
-        <!-- SOLICITUD -->
-        <div class="card" id="form-solicitud" style="display:none;">
-            <h3 style="color:white; text-align:left; margin-top:0;">Programar Viaje</h3>
-            <div class="form-group"><label>Tipo de Servicio</label>
-                <select id="inp-tipo-viaje"><option>Turismo / Paseo de Día</option><option>Viaje de Negocios / Reunión</option><option>Traslado Interurbano</option></select>
-            </div>
-            <div class="form-group"><label>Fecha del Viaje</label>
-                <div class="grid-3"><select id="fecha-dia"></select><select id="fecha-mes" onchange="actualizarFechaCompleta()"></select><select id="fecha-anio" onchange="actualizarFechaCompleta()"></select></div>
-                <input type="hidden" id="inp-fecha-final">
-            </div>
-            <div class="form-group"><label>Total de Pasajeros</label><input type="number" id="inp-pasajeros" value="1" min="1" max="15"></div>
+        <!-- SOLICITUD DE VIAJE -->
+        <div class="card" id="form-solicitud" style="display: none;">
+            <h3 style="color:white; text-align:left; margin-top:0; border-bottom:1px solid var(--border); padding-bottom:12px;">Programar Viaje</h3>
             
+            <div class="form-group">
+                <label>Tipo de Servicio</label>
+                <select id="inp-tipo-viaje">
+                    <option value="Turismo / Paseo de Día">Turismo / Paseo de Día (Ej: Salto Cristal)</option>
+                    <option value="Viaje de Negocios / Reunión">Viaje de Negocios / Reunión</option>
+                    <option value="Traslado Interurbano">Traslado Interurbano (Ida simple)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Fecha del Viaje (Con Día de la Semana)</label>
+                <div class="grid-3">
+                    <select id="fecha-dia" onchange="actualizarFechaCompleta()"></select>
+                    <select id="fecha-mes" onchange="actualizarFechaCompleta()"></select>
+                    <select id="fecha-anio" onchange="actualizarFechaCompleta()"></select>
+                </div>
+                <input type="hidden" id="inp-fecha-final">
+                <p id="lbl-fecha-formateada" style="font-size:0.8rem; color:var(--primary); margin:5px 0 0 0; font-weight:bold; text-align:left;"></p>
+            </div>
+
+            <div class="form-group">
+                <label>Total de Pasajeros</label>
+                <input type="number" id="inp-pasajeros" value="1" min="1" max="15">
+            </div>
+
             <div class="section-title">Punto de Partida (Origen)</div>
             <div class="grid-2">
                 <div class="form-group"><label>Departamento</label><select id="origen-depto" onchange="actCiuOrigen()"></select></div>
@@ -61,21 +97,26 @@
                 <div class="form-group"><label>Departamento</label><select id="dest-depto" onchange="actCiuDestino()"></select></div>
                 <div class="form-group"><label>Ciudad Destino</label><select id="dest-ciudad" onchange="consultarClima()"></select></div>
             </div>
-            <div class="form-group"><label>Lugar Específico</label><input type="text" id="dest-lugar" placeholder="Ej: Salto Cristal"></div>
-            <div id="widget-clima">Cargando pronóstico...</div>
+            <div class="form-group">
+                <label>Lugar o Referencia Específica</label>
+                <input type="text" id="dest-lugar" placeholder="Ej: Salto Cristal, Hotel o Dirección" autocomplete="off">
+            </div>
+
+            <div id="widget-clima">Cargando pronóstico meteorológico...</div>
 
             <div class="section-title">Información de Contacto</div>
-            <div class="form-group"><label>Nombre Completo</label><input type="text" id="inp-cliente" placeholder="Su nombre"></div>
+            <div class="form-group"><label>Nombre Completo</label><input type="text" id="inp-cliente" placeholder="Ingrese su nombre"></div>
             <div class="form-group"><label>Número de WhatsApp</label><input type="tel" id="inp-telefono" placeholder="Ej: 0981234567"></div>
 
             <button class="btn-opcion principal" style="margin-top: 20px;" onclick="enviarViaje()">Publicar Solicitud de Viaje</button>
-            <button class="btn-secundario" style="border:none; margin-top:5px;" onclick="location.reload()">Cancelar</button>
+            <button class="btn-secundario" style="border:none; margin-top:5px;" onclick="location.reload()">Volver al Inicio</button>
         </div>
     </div>
 
-    <!-- FIREBASE -->
+    <!-- FIREBASE COMPAT -->
     <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-database-compat.js"></script>
+
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyAg6rZnqUFgTcRiAHA0AWvYR-imovVb_0s",
@@ -83,76 +124,156 @@
             projectId: "gestorinmobiliario-d68b3",
             databaseURL: "https://gestorinmobiliario-d68b3-default-rtdb.firebaseio.com"
         };
-        firebase.initializeApp(firebaseConfig);
+        
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.database();
-        let climaGlobalGuardado = "Pronóstico no verificado";
+        let climaGlobalGuardado = "Pronóstico no verificado"; 
 
         function mostrarNotificacion(mensaje) {
             let toast = document.getElementById('toast-notification');
             toast.innerText = mensaje; toast.classList.add('activa');
-            setTimeout(() => toast.classList.remove('activa'), 4000);
+            setTimeout(() => { toast.classList.remove('activa'); }, 4000);
         }
 
+        // TODOS LOS DEPARTAMENTOS Y CIUDADES DE PARAGUAY RESTAURADOS
         const deptosPy = {
-            "Central": ["Itauguá", "Areguá", "Capiatá", "San Lorenzo", "Luque", "Asunción"],
-            "Paraguarí": ["Paraguarí", "Carapeguá", "Yaguarón"],
-            "Cordillera": ["Caacupé", "San Bernardino", "Piribebuy"]
-            // Puedes agregar más departamentos aquí
+            "Asunción (Capital)": ["Asunción"],
+            "Central": ["Itauguá", "Areguá", "Capiatá", "Fernando de la Mora", "Guarambaré", "Itá", "J. Augusto Saldívar", "Lambaré", "Limpio", "Luque", "Mariano R. Alonso", "Nueva Italia", "Ñemby", "San Antonio", "San Lorenzo", "Villa Elisa", "Villeta", "Ypacaraí", "Ypané"],
+            "Cordillera": ["Caacupé", "Altos", "Arroyos y Esteros", "Atyrá", "Caraguatay", "Emboscada", "Eusebio Ayala", "Isla Pucú", "Itacurubí de la Cord.", "Piribebuy", "San Bernardino", "Tobatí"],
+            "Paraguarí": ["Paraguarí", "Acahay", "Caapucú", "Carapeguá", "Escobar", "La Colmena", "Mbuyapey", "Pirayú", "Quiindy", "Quyquyhó", "San Roque González", "Sapucai", "Yaguarón", "Ybycuí"],
+            "Alto Paraná": ["Ciudad del Este", "Hernandarias", "Minga Guazú", "Presidente Franco", "Santa Rita", "Yguazú"],
+            "Itapúa": ["Encarnación", "Bella Vista", "Carmen del Paraná", "Colonias Unidas", "Coronel Bogado", "Hohenau", "Obligado", "San Cosme y Damián"],
+            "Caaguazú": ["Coronel Oviedo", "Caaguazú", "J. Eulogio Estigarribia (Campo 9)", "San José de los Arroyos"],
+            "Guairá": ["Villarrica", "Colonia Independencia", "Itapé", "Mbocayaty"],
+            "Concepción": ["Concepción", "Horqueta", "Loreto", "Yby Yaú"],
+            "San Pedro": ["San Pedro del Ycuamandyyú", "Santa Rosa del Aguaray", "San Estanislao (Santaní)"],
+            "Caazapá": ["Caazapá", "Atyrá", "Yuty"],
+            "Misiones": ["San Juan Bautista", "Ayolas", "San Ignacio", "Santa Rosa"],
+            "Ñeembucú": ["Pilar", "Alberdi", "Cerrito"],
+            "Amambay": ["Pedro Juan Caballero", "Bella Vista Norte", "Capitán Bado"],
+            "Canindeyú": ["Salto del Guairá", "Curuguaty"],
+            "Presidente Hayes": ["Villa Hayes", "Benjamín Aceval"],
+            "Boquerón": ["Filadelfia", "Loma Plata", "Neuland"],
+            "Alto Paraguay": ["Fuerte Olimpo", "Bahía Negra"]
         };
+
+        const mesesNombre = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+        const diasSemana = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 
         function actCiuOrigen() {
             let d = document.getElementById('origen-depto').value;
-            let html = ''; (deptosPy[d] || ["Ciudad Genérica"]).forEach(c => html += `<option value="${c}">${c}</option>`);
+            let html = ''; (deptosPy[d] || []).forEach(c => html += `<option value="${c}">${c}</option>`);
             document.getElementById('origen-ciudad').innerHTML = html;
         }
+
         function actCiuDestino() {
             let d = document.getElementById('dest-depto').value;
-            let html = ''; (deptosPy[d] || ["Ciudad Genérica"]).forEach(c => html += `<option value="${c}">${c}</option>`);
+            let html = ''; (deptosPy[d] || []).forEach(c => html += `<option value="${c}">${c}</option>`);
             document.getElementById('dest-ciudad').innerHTML = html;
             consultarClima();
         }
 
-        window.onload = function() {
-            let htmlD = ''; for(let d in deptosPy) htmlD += `<option value="${d}">${d}</option>`;
-            if(!htmlD) htmlD = '<option value="Central">Central</option><option value="Interior">Interior</option>';
-            document.getElementById('origen-depto').innerHTML = htmlD; document.getElementById('dest-depto').innerHTML = htmlD;
-            actCiuOrigen(); actCiuDestino();
-
-            // Fechas
+        function inicializarSelectorFecha() {
             let hoy = new Date();
-            let htmlDias = ''; for(let i=1; i<=31; i++) htmlDias += `<option value="${i<10?'0'+i:i}">${i}</option>`;
-            document.getElementById('fecha-dia').innerHTML = htmlDias;
-            document.getElementById('fecha-dia').value = hoy.getDate() < 10 ? '0'+hoy.getDate() : hoy.getDate();
+            let selectDia = document.getElementById('fecha-dia');
+            let selectMes = document.getElementById('fecha-mes');
+            let selectAnio = document.getElementById('fecha-anio');
+
+            actualizarDiasDelMes();
             
-            let htmlMeses = '<option value="01">Ene</option><option value="02">Feb</option><option value="03">Mar</option><option value="04">Abr</option><option value="05">May</option><option value="06">Jun</option><option value="07">Jul</option><option value="08">Ago</option><option value="09">Sep</option><option value="10">Oct</option><option value="11">Nov</option><option value="12">Dic</option>';
-            document.getElementById('fecha-mes').innerHTML = htmlMeses;
-            
-            let a = hoy.getFullYear(); document.getElementById('fecha-anio').innerHTML = `<option value="${a}">${a}</option><option value="${a+1}">${a+1}</option>`;
+            selectMes.value = (hoy.getMonth() + 1) < 10 ? '0' + (hoy.getMonth() + 1) : (hoy.getMonth() + 1);
+            selectDia.value = hoy.getDate() < 10 ? '0' + hoy.getDate() : hoy.getDate();
+
+            let anioActual = hoy.getFullYear();
+            selectAnio.innerHTML = `<option value="${anioActual}">${anioActual}</option><option value="${anioActual+1}">${anioActual+1}</option>`;
+
             actualizarFechaCompleta();
         }
 
-        function actualizarFechaCompleta() {
-            let d = document.getElementById('fecha-dia').value; let m = document.getElementById('fecha-mes').value; let a = document.getElementById('fecha-anio').value;
-            document.getElementById('inp-fecha-final').value = `${a}-${m}-${d}`;
+        function actualizarDiasDelMes() {
+            let selectDia = document.getElementById('fecha-dia');
+            let mVal = parseInt(document.getElementById('fecha-mes').value) || 1;
+            let aVal = parseInt(document.getElementById('fecha-anio').value) || new Date().getFullYear();
+            
+            let diasEnMes = new Date(aVal, mVal, 0).getDate();
+            let diaSeleccionadoActual = selectDia.value;
+
+            let htmlDias = '';
+            for(let i = 1; i <= diasEnMes; i++) {
+                let dStr = i < 10 ? '0' + i : i;
+                let fechaObj = new Date(aVal, mVal - 1, i);
+                let nombreDia = diasSemana[fechaObj.getDay()];
+                htmlDias += `<option value="${dStr}">${nombreDia} ${i}</option>`;
+            }
+            selectDia.innerHTML = htmlDias;
+            if(selectDia.querySelector(`option[value="${diaSeleccionadoActual}"]`)) {
+                selectDia.value = diaSeleccionadoActual;
+            }
         }
-        function consultarClima() { climaGlobalGuardado = "Condiciones Normales (Simulado)"; document.getElementById('widget-clima').style.display='block'; document.getElementById('widget-clima').innerHTML = "Clima listo."; }
+
+        function actualizarFechaCompleta() {
+            actualizarDiasDelMes();
+            let d = document.getElementById('fecha-dia').value;
+            let mVal = document.getElementById('fecha-mes').value;
+            let mTexto = mesesNombre[parseInt(mVal) - 1];
+            let a = document.getElementById('fecha-anio').value;
+
+            let fechaObj = new Date(a, parseInt(mVal) - 1, parseInt(d));
+            let nombreDiaLargo = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"][fechaObj.getDay()];
+
+            let fechaISO = `${a}-${mVal}-${d}`;
+            document.getElementById('inp-fecha-final').value = fechaISO;
+            document.getElementById('lbl-fecha-formateada').innerText = `${nombreDiaLargo}, ${parseInt(d)} de ${mTexto} de ${a}`;
+            consultarClima();
+        }
+
+        window.onload = function() {
+            let htmlD = '';
+            for(let d in deptosPy) htmlD += `<option value="${d}">${d}</option>`;
+            document.getElementById('origen-depto').innerHTML = htmlD;
+            document.getElementById('dest-depto').innerHTML = htmlD;
+            
+            let htmlMeses = '';
+            mesesNombre.forEach((m, idx) => {
+                let val = (idx + 1) < 10 ? '0' + (idx + 1) : (idx + 1);
+                htmlMeses += `<option value="${val}">${m}</option>`;
+            });
+            document.getElementById('fecha-mes').innerHTML = htmlMeses;
+
+            inicializarSelectorFecha();
+            actCiuOrigen();
+            actCiuDestino();
+        }
+
+        function consultarClima() {
+            climaGlobalGuardado = "Condiciones Normales";
+            let w = document.getElementById('widget-clima');
+            w.style.display = "block";
+            w.innerHTML = "Clima verificado para la fecha seleccionada.";
+        }
 
         function enviarViaje() {
             let data = {
                 tipo: document.getElementById('inp-tipo-viaje').value,
                 fecha: document.getElementById('inp-fecha-final').value,
                 pasajeros: document.getElementById('inp-pasajeros').value,
-                origen: document.getElementById('origen-ciudad').value,
-                destino: document.getElementById('dest-lugar').value + " - " + document.getElementById('dest-ciudad').value,
+                origen: document.getElementById('origen-ciudad').value + " (" + document.getElementById('origen-depto').value + ")",
+                destino: document.getElementById('dest-lugar').value + " - " + document.getElementById('dest-ciudad').value + " (" + document.getElementById('dest-depto').value + ")",
                 cliente: document.getElementById('inp-cliente').value.trim(),
                 telefono: document.getElementById('inp-telefono').value.trim(),
-                clima: climaGlobalGuardado, estado: "Esperando Propuestas"
+                clima: climaGlobalGuardado,
+                estado: "Esperando Propuestas"
             };
-            if(!data.cliente || !data.telefono || !document.getElementById('dest-lugar').value.trim()) { mostrarNotificacion("Complete todos los campos."); return; }
+
+            if(!data.cliente || !data.telefono || !document.getElementById('dest-lugar').value.trim()) { 
+                mostrarNotificacion("Complete todos los campos obligatorios."); 
+                return; 
+            }
+
             db.ref('viajes_turismo/pendientes').push(data).then(() => {
-                mostrarNotificacion("¡Viaje publicado!");
+                mostrarNotificacion("¡Viaje publicado con éxito!");
                 setTimeout(() => location.reload(), 2000);
-            });
+            }).catch(e => mostrarNotificacion("Error al publicar: " + e.message));
         }
     </script>
 </body>

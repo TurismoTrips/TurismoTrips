@@ -3,118 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TurismoTrips | Red de Transporte Larga Distancia</title>
+    <title>TurismoTrips | Red de Transporte</title>
     <style>
-        :root { --primary: #0284c7; --bg-base: #0f172a; --bg-card: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --border: #334155; --success: #10b981; --warning: #f59e0b; --danger: #ef4444; }
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-base); color: var(--text-main); margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; align-items: center; justify-content: center;}
-        
-        .container { width: 100%; max-width: 520px; padding: 20px; box-sizing: border-box; position: relative; z-index: 10; }
-        .card { background: var(--bg-card); padding: 30px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.3); text-align: center; position: relative; z-index: 20; }
-        
-        h1 { margin: 0 0 10px 0; font-size: 2rem; color: white; font-weight: 700; letter-spacing: -0.5px;}
-        h1 span { color: var(--primary); font-weight: 400; }
+        :root { --primary: #0284c7; --bg-base: #0f172a; --bg-card: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --border: #334155; --success: #10b981; --warning: #f59e0b; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-base); color: var(--text-main); margin: 0; padding: 0; display: flex; justify-content: center; padding-top: 40px;}
+        .container { width: 100%; max-width: 520px; padding: 20px; box-sizing: border-box; }
+        .card { background: var(--bg-card); padding: 30px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.3); text-align: center; margin-bottom: 20px; }
+        h1 { margin: 0 0 10px 0; font-size: 2rem; color: white; } h1 span { color: var(--primary); font-weight: 400; }
         p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px; }
-
-        .btn-opcion { background: #020617; border: 1px solid var(--border); color: white; padding: 16px; border-radius: 8px; font-size: 1rem; font-weight: 600; width: 100%; cursor: pointer; margin-bottom: 12px; transition: 0.2s; display: block; box-sizing: border-box;}
-        .btn-opcion:hover { border-color: var(--primary); background: rgba(2, 132, 199, 0.05); }
+        .btn-opcion { background: #020617; border: 1px solid var(--border); color: white; padding: 16px; border-radius: 8px; font-size: 1rem; font-weight: 600; width: 100%; cursor: pointer; margin-bottom: 12px; display: block; box-sizing: border-box;}
         .btn-opcion.principal { background: var(--primary); color: white; border: none; }
-        .btn-opcion.principal:hover { filter: brightness(1.1); }
-        .btn-secundario { background: transparent; color: var(--primary); border: 1px solid var(--primary); font-weight: 600; padding: 14px; border-radius: 8px; width: 100%; cursor: pointer; transition: 0.2s; display: block; box-sizing: border-box; margin-top: 10px;}
-        .btn-secundario:hover { background: rgba(2, 132, 199, 0.1); }
-
-        .vista { display: none; width: 100%; max-width: 550px; text-align: left; padding: 20px; box-sizing: border-box; }
-        .vista.activa { display: block; }
-        
+        .btn-secundario { background: transparent; color: var(--primary); border: 1px solid var(--primary); font-weight: 600; padding: 14px; border-radius: 8px; width: 100%; cursor: pointer; display: block; box-sizing: border-box; margin-top: 10px;}
         .form-group { margin-bottom: 16px; text-align: left; }
         .form-group label { display: block; margin-bottom: 8px; font-size: 0.85rem; color: var(--text-muted); font-weight: 600;}
         .form-group input, .form-group select { width: 100%; padding: 13px; border-radius: 8px; border: 1px solid var(--border); background: #020617; color: white; font-size: 0.95rem; box-sizing: border-box; outline: none;}
-        .form-group input:focus, .form-group select:focus { border-color: var(--primary); }
-        
-        .password-wrapper { position: relative; display: flex; align-items: center; }
-        .password-wrapper input { padding-right: 75px; }
-        .btn-ver-pass { position: absolute; right: 10px; background: transparent; border: none; color: var(--primary); font-size: 0.75rem; font-weight: bold; cursor: pointer; text-transform: uppercase; padding: 5px 8px; }
-        .btn-ver-pass:hover { color: white; }
-
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .grid-3 { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 10px; }
-        
-        .header-modulo { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:20px; }
-        .header-modulo h3 { margin:0; font-size:1.2rem; color:white; }
-        .btn-volver { background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:0.85rem; font-weight:600; padding:0; text-decoration: underline;}
-        .btn-volver:hover { color:white; }
-
-        .section-title { font-size: 0.75rem; color: var(--text-muted); margin: 25px 0 15px 0; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; border-left: 3px solid var(--primary); padding-left: 10px; }
-
-        .viaje-card { background: #020617; border: 1px solid var(--border); padding: 18px; border-radius: 10px; margin-bottom: 20px; }
-        .viaje-card h4 { margin: 0 0 10px 0; color: white; font-size: 1.1rem; }
-        .viaje-card p { margin: 6px 0; font-size: 0.85rem; color: var(--text-muted); }
-        .badge-estado { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; background: rgba(16,185,129,0.2); color: var(--success); }
-        .badge-clima { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; background: rgba(245, 158, 11, 0.2); color: var(--warning); }
-        
-        #toast-notification {
-            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%) translateY(100px);
-            background: #1e293b; color: white; border: 1px solid var(--primary); padding: 14px 24px;
-            border-radius: 30px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            opacity: 0; transition: all 0.3s ease-in-out; z-index: 999; pointer-events: none; text-align: center; max-width: 90%;
-        }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; } .grid-3 { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 10px; }
+        .section-title { font-size: 0.75rem; color: var(--text-muted); margin: 25px 0 15px 0; font-weight: 700; text-transform: uppercase; border-left: 3px solid var(--primary); padding-left: 10px; text-align: left;}
+        #toast-notification { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1e293b; color: white; border: 1px solid var(--primary); padding: 14px 24px; border-radius: 30px; opacity: 0; transition: all 0.3s ease-in-out; z-index: 999; pointer-events: none; }
         #toast-notification.activo { transform: translateX(-50%) translateY(0); opacity: 1; }
-
-        #widget-clima { display: none; background: rgba(2, 132, 199, 0.05); border: 1px solid var(--border); padding: 12px; border-radius: 8px; margin-top: 10px; text-align: center; font-size: 0.9rem; font-weight: 600; color: white;}
+        #widget-clima { display: none; background: rgba(2, 132, 199, 0.05); border: 1px solid var(--border); padding: 12px; border-radius: 8px; margin-top: 10px; text-align: center; color: white;}
     </style>
 </head>
 <body>
-
-    <div id="toast-notification">Mensaje del sistema</div>
-
-    <!-- 1. MENÚ PRINCIPAL -->
-    <div class="vista activa container" id="vista-inicio">
-        <div class="card">
+    <div id="toast-notification">Mensaje</div>
+    <div class="container">
+        <!-- MENÚ -->
+        <div class="card" id="menu-principal">
             <h1>Turismo<span>Trips</span></h1>
-            <p>Plataforma de Transporte y Larga Distancia Paraguay</p>
-            
-            <button class="btn-opcion principal" onclick="cambiarVista('vista-solicitud')">Programar un Viaje / Ruta</button>
-            <button class="btn-opcion" onclick="cambiarVista('vista-registro')">Registrarme como Conductor</button>
-            
+            <p>Plataforma de Transporte y Larga Distancia</p>
+            <button class="btn-opcion principal" onclick="document.getElementById('form-solicitud').style.display='block'; document.getElementById('menu-principal').style.display='none';">Programar un Viaje</button>
             <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border);">
-                <p style="font-size: 0.85rem; margin-bottom: 15px;">¿Ya está registrado en la red?</p>
-                <button class="btn-secundario" onclick="cambiarVista('vista-login')">Acceder al Panel de Chofer</button>
+                <p style="font-size: 0.85rem; margin-bottom: 15px;">¿Eres Conductor?</p>
+                <button class="btn-secundario" onclick="window.location.href='login.html'">Acceder al Panel de Chofer</button>
             </div>
         </div>
-    </div>
 
-    <!-- 2. SOLICITUD DE VIAJE -->
-    <div class="vista" id="vista-solicitud">
-        <div class="card">
-            <div class="header-modulo">
-                <h3>Programar Viaje</h3>
-                <button class="btn-volver" onclick="cambiarVista('vista-inicio')">Volver al Inicio</button>
+        <!-- SOLICITUD -->
+        <div class="card" id="form-solicitud" style="display:none;">
+            <h3 style="color:white; text-align:left; margin-top:0;">Programar Viaje</h3>
+            <div class="form-group"><label>Tipo de Servicio</label>
+                <select id="inp-tipo-viaje"><option>Turismo / Paseo de Día</option><option>Viaje de Negocios / Reunión</option><option>Traslado Interurbano</option></select>
             </div>
-            
-            <div class="form-group">
-                <label>Tipo de Servicio</label>
-                <select id="inp-tipo-viaje">
-                    <option value="Turismo / Paseo de Día">Turismo / Paseo de Día (Ej: Salto Cristal)</option>
-                    <option value="Viaje de Negocios / Reunión">Viaje de Negocios / Reunión</option>
-                    <option value="Traslado Interurbano">Traslado Interurbano (Ida simple)</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Fecha del Viaje</label>
-                <div class="grid-3">
-                    <select id="fecha-dia"></select>
-                    <select id="fecha-mes" onchange="actualizarFechaCompleta()"></select>
-                    <select id="fecha-anio" onchange="actualizarFechaCompleta()"></select>
-                </div>
+            <div class="form-group"><label>Fecha del Viaje</label>
+                <div class="grid-3"><select id="fecha-dia"></select><select id="fecha-mes" onchange="actualizarFechaCompleta()"></select><select id="fecha-anio" onchange="actualizarFechaCompleta()"></select></div>
                 <input type="hidden" id="inp-fecha-final">
-                <p id="lbl-fecha-formateada" style="font-size:0.8rem; color:var(--primary); margin:5px 0 0 0; font-weight:bold;"></p>
             </div>
-
-            <div class="form-group">
-                <label>Total de Pasajeros</label>
-                <input type="number" id="inp-pasajeros" value="1" min="1" max="15">
-            </div>
-
+            <div class="form-group"><label>Total de Pasajeros</label><input type="number" id="inp-pasajeros" value="1" min="1" max="15"></div>
+            
             <div class="section-title">Punto de Partida (Origen)</div>
             <div class="grid-2">
                 <div class="form-group"><label>Departamento</label><select id="origen-depto" onchange="actCiuOrigen()"></select></div>
@@ -126,473 +61,97 @@
                 <div class="form-group"><label>Departamento</label><select id="dest-depto" onchange="actCiuDestino()"></select></div>
                 <div class="form-group"><label>Ciudad Destino</label><select id="dest-ciudad" onchange="consultarClima()"></select></div>
             </div>
-            <div class="form-group">
-                <label>Lugar o Referencia Específica</label>
-                <input type="text" id="dest-lugar" placeholder="Ej: Salto Cristal, Hotel o Dirección exactas" autocomplete="off">
-            </div>
-
-            <div id="widget-clima">Cargando pronóstico meteorológico...</div>
+            <div class="form-group"><label>Lugar Específico</label><input type="text" id="dest-lugar" placeholder="Ej: Salto Cristal"></div>
+            <div id="widget-clima">Cargando pronóstico...</div>
 
             <div class="section-title">Información de Contacto</div>
-            <div class="form-group"><label>Nombre Completo</label><input type="text" id="inp-cliente" placeholder="Ingrese su nombre" autocomplete="name"></div>
-            <div class="form-group"><label>Número de WhatsApp</label><input type="tel" id="inp-telefono" placeholder="Ej: 0981234567" autocomplete="tel"></div>
+            <div class="form-group"><label>Nombre Completo</label><input type="text" id="inp-cliente" placeholder="Su nombre"></div>
+            <div class="form-group"><label>Número de WhatsApp</label><input type="tel" id="inp-telefono" placeholder="Ej: 0981234567"></div>
 
             <button class="btn-opcion principal" style="margin-top: 20px;" onclick="enviarViaje()">Publicar Solicitud de Viaje</button>
+            <button class="btn-secundario" style="border:none; margin-top:5px;" onclick="location.reload()">Cancelar</button>
         </div>
     </div>
 
-    <!-- 3. REGISTRO DE CHOFER -->
-    <div class="vista" id="vista-registro">
-        <div class="card">
-            <div class="header-modulo">
-                <h3>Registro de Conductor</h3>
-                <button class="btn-volver" onclick="cambiarVista('vista-inicio')">Volver</button>
-            </div>
-            <div class="form-group"><label>Nombre y Apellido</label><input type="text" id="reg-nombre" placeholder="Ej: Juan Pérez" autocomplete="name"></div>
-            <div class="form-group"><label>Vehículo (Marca, Modelo y Año)</label><input type="text" id="reg-vehiculo" placeholder="Ej: Toyota Noah 2012 / Confort" autocomplete="off"></div>
-            <div class="form-group"><label>WhatsApp del Chofer</label><input type="tel" id="reg-telefono" placeholder="Ej: 0971000111" autocomplete="tel"></div>
-            <div class="form-group"><label>Correo Electrónico</label><input type="email" id="reg-email" placeholder="chofer@correo.com" autocomplete="email"></div>
-            
-            <div class="form-group">
-                <label>Contraseña</label>
-                <div class="password-wrapper">
-                    <input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
-                    <button type="button" class="btn-ver-pass" onclick="togglePassword('reg-pass', this)">Ver</button>
-                </div>
-            </div>
-
-            <button class="btn-opcion principal" id="btn-reg" onclick="registrarChofer()">Crear Cuenta Conductor</button>
-        </div>
-    </div>
-
-    <!-- 4. LOGIN DE CHOFER -->
-    <div class="vista" id="vista-login">
-        <div class="card">
-            <div class="header-modulo">
-                <h3>Acceso a Conductores</h3>
-                <button class="btn-volver" onclick="cambiarVista('vista-inicio')">Volver</button>
-            </div>
-            <div class="form-group"><label>Correo Electrónico</label><input type="email" id="log-email" autocomplete="email"></div>
-            
-            <div class="form-group">
-                <label>Contraseña</label>
-                <div class="password-wrapper">
-                    <input type="password" id="log-pass" autocomplete="current-password">
-                    <button type="button" class="btn-ver-pass" onclick="togglePassword('log-pass', this)">Ver</button>
-                </div>
-            </div>
-
-            <button class="btn-opcion principal" id="btn-login" onclick="loginChofer()">Ingresar al Panel</button>
-        </div>
-    </div>
-
-    <!-- 5. PANEL PRIVADO DEL CHOFER -->
-    <div class="vista" id="vista-panel-chofer">
-        <div class="card">
-            <div class="header-modulo">
-                <h3 id="panel-nombre-chofer">Centro de Control Chofer</h3>
-                <button class="btn-volver" onclick="cerrarSesion()">Cerrar Sesión</button>
-            </div>
-            
-            <p style="text-align:left; color:white; font-weight:bold; margin-bottom: 15px;">Bolsa de Viajes Disponibles en Paraguay:</p>
-            <div id="contenedor-viajes-chofer">
-                <p style="color:var(--text-muted); font-size:0.9rem;">Cargando solicitudes...</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- FIREBASE COMPAT -->
+    <!-- FIREBASE -->
     <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-database-compat.js"></script>
-
     <script>
-        // CONFIGURACIÓN DE FIREBASE CORREGIDA Y COMPLETA
         const firebaseConfig = {
             apiKey: "AIzaSyAg6rZnqUFgTcRiAHA0AWvYR-imovVb_0s",
             authDomain: "gestorinmobiliario-d68b3.firebaseapp.com",
             projectId: "gestorinmobiliario-d68b3",
             databaseURL: "https://gestorinmobiliario-d68b3-default-rtdb.firebaseio.com"
         };
-        
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+        firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-        const auth = firebase.auth();
+        let climaGlobalGuardado = "Pronóstico no verificado";
 
-        let choferPerfilData = null;
-        let climaGlobalGuardado = "Pronóstico no verificado"; 
-
-        window.mostrarNotificacion = function(mensaje) {
+        function mostrarNotificacion(mensaje) {
             let toast = document.getElementById('toast-notification');
-            toast.innerText = mensaje;
-            toast.classList.add('activa');
-            setTimeout(() => { toast.classList.remove('activa'); }, 4000);
+            toast.innerText = mensaje; toast.classList.add('activa');
+            setTimeout(() => toast.classList.remove('activa'), 4000);
         }
-
-        window.togglePassword = function(idInput, btn) {
-            let input = document.getElementById(idInput);
-            if(input.type === "password") {
-                input.type = "text";
-                btn.innerText = "Ocultar";
-            } else {
-                input.type = "password";
-                btn.innerText = "Ver";
-            }
-        }
-
-        const coordDeptos = {
-            "Asunción (Capital)": {lat: -25.28, lon: -57.63},
-            "Central": {lat: -25.28, lon: -57.53},
-            "Paraguarí": {lat: -25.62, lon: -57.14},
-            "Cordillera": {lat: -25.38, lon: -57.14},
-            "Itapúa": {lat: -27.33, lon: -55.86},
-            "Alto Paraná": {lat: -25.50, lon: -54.61},
-            "Caaguazú": {lat: -25.45, lon: -56.44},
-            "Guairá": {lat: -25.78, lon: -56.44},
-            "Concepción": {lat: -23.40, lon: -57.43},
-            "San Pedro": {lat: -24.08, lon: -57.07},
-            "Caazapá": {lat: -26.18, lon: -56.36},
-            "Misiones": {lat: -26.83, lon: -57.14},
-            "Ñeembucú": {lat: -26.86, lon: -58.29},
-            "Amambay": {lat: -22.53, lon: -55.73},
-            "Canindeyú": {lat: -24.18, lon: -55.62},
-            "Presidente Hayes": {lat: -24.86, lon: -57.56},
-            "Boquerón": {lat: -22.34, lon: -60.03},
-            "Alto Paraguay": {lat: -20.25, lon: -58.16}
-        };
 
         const deptosPy = {
-            "Asunción (Capital)": ["Asunción"],
-            "Central": ["Itauguá", "Areguá", "Capiatá", "Fernando de la Mora", "Guarambaré", "Itá", "J. Augusto Saldívar", "Lambaré", "Limpio", "Luque", "Mariano R. Alonso", "Nueva Italia", "Ñemby", "San Antonio", "San Lorenzo", "Villa Elisa", "Villeta", "Ypacaraí", "Ypané"],
-            "Cordillera": ["Caacupé", "Altos", "Arroyos y Esteros", "Atyrá", "Caraguatay", "Emboscada", "Eusebio Ayala", "Isla Pucú", "Itacurubí de la Cord.", "Piribebuy", "San Bernardino", "Tobatí"],
-            "Paraguarí": ["Paraguarí", "Acahay", "Caapucú", "Carapeguá", "Escobar", "La Colmena", "Mbuyapey", "Pirayú", "Quiindy", "Quyquyhó", "San Roque González", "Sapucai", "Yaguarón", "Ybycuí"],
-            "Alto Paraná": ["Ciudad del Este", "Hernandarias", "Minga Guazú", "Presidente Franco", "Santa Rita", "Yguazú"],
-            "Itapúa": ["Encarnación", "Bella Vista", "Carmen del Paraná", "Colonias Unidas", "Coronel Bogado", "Hohenau", "Obligado", "San Cosme y Damián"],
-            "Caaguazú": ["Coronel Oviedo", "Caaguazú", "J. Eulogio Estigarribia (Campo 9)", "San José de los Arroyos"],
-            "Guairá": ["Villarrica", "Colonia Independencia", "Itapé", "Mbocayaty"],
-            "Concepción": ["Concepción", "Horqueta", "Loreto", "Yby Yaú"],
-            "San Pedro": ["San Pedro del Ycuamandyyú", "Santa Rosa del Aguaray", "San Estanislao (Santaní)"],
-            "Caazapá": ["Caazapá", "Atyrá", "Yuty"],
-            "Misiones": ["San Juan Bautista", "Ayolas", "San Ignacio", "Santa Rosa"],
-            "Ñeembucú": ["Pilar", "Alberdi", "Cerrito"],
-            "Amambay": ["Pedro Juan Caballero", "Bella Vista Norte", "Capitán Bado"],
-            "Canindeyú": ["Salto del Guairá", "Curuguaty"],
-            "Presidente Hayes": ["Villa Hayes", "Benjamín Aceval"],
-            "Boquerón": ["Filadelfia", "Loma Plata", "Neuland"],
-            "Alto Paraguay": ["Fuerte Olimpo", "Bahía Negra"]
+            "Central": ["Itauguá", "Areguá", "Capiatá", "San Lorenzo", "Luque", "Asunción"],
+            "Paraguarí": ["Paraguarí", "Carapeguá", "Yaguarón"],
+            "Cordillera": ["Caacupé", "San Bernardino", "Piribebuy"]
+            // Puedes agregar más departamentos aquí
         };
 
-        const mesesNombre = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-
-        window.cambiarVista = function(idVista) {
-            document.querySelectorAll('.vista').forEach(v => v.classList.remove('activa'));
-            document.getElementById(idVista).classList.add('activa');
-        }
-
-        window.actCiuOrigen = function() {
+        function actCiuOrigen() {
             let d = document.getElementById('origen-depto').value;
-            let html = '';
-            (deptosPy[d] || []).forEach(c => html += `<option value="${c}">${c}</option>`);
+            let html = ''; (deptosPy[d] || ["Ciudad Genérica"]).forEach(c => html += `<option value="${c}">${c}</option>`);
             document.getElementById('origen-ciudad').innerHTML = html;
         }
-
-        window.actCiuDestino = function() {
+        function actCiuDestino() {
             let d = document.getElementById('dest-depto').value;
-            let html = '';
-            (deptosPy[d] || []).forEach(c => html += `<option value="${c}">${c}</option>`);
+            let html = ''; (deptosPy[d] || ["Ciudad Genérica"]).forEach(c => html += `<option value="${c}">${c}</option>`);
             document.getElementById('dest-ciudad').innerHTML = html;
             consultarClima();
         }
 
-        function inicializarSelectorFecha() {
+        window.onload = function() {
+            let htmlD = ''; for(let d in deptosPy) htmlD += `<option value="${d}">${d}</option>`;
+            if(!htmlD) htmlD = '<option value="Central">Central</option><option value="Interior">Interior</option>';
+            document.getElementById('origen-depto').innerHTML = htmlD; document.getElementById('dest-depto').innerHTML = htmlD;
+            actCiuOrigen(); actCiuDestino();
+
+            // Fechas
             let hoy = new Date();
-            let selectDia = document.getElementById('fecha-dia');
-            let selectMes = document.getElementById('fecha-mes');
-            let selectAnio = document.getElementById('fecha-anio');
-
-            let htmlDias = '';
-            for(let i=1; i<=31; i++) {
-                let d = i < 10 ? '0' + i : i;
-                htmlDias += `<option value="${d}" ${i === hoy.getDate() ? 'selected' : ''}>${i}</option>`;
-            }
-            selectDia.innerHTML = htmlDias;
-
-            let htmlMeses = '';
-            mesesNombre.forEach((m, idx) => {
-                let val = (idx + 1) < 10 ? '0' + (idx + 1) : (idx + 1);
-                htmlMeses += `<option value="${val}" ${idx === hoy.getMonth() ? 'selected' : ''}>${m}</option>`;
-            });
-            selectMes.innerHTML = htmlMeses;
-
-            let anioActual = hoy.getFullYear();
-            selectAnio.innerHTML = `<option value="${anioActual}">${anioActual}</option><option value="${anioActual+1}">${anioActual+1}</option>`;
-
+            let htmlDias = ''; for(let i=1; i<=31; i++) htmlDias += `<option value="${i<10?'0'+i:i}">${i}</option>`;
+            document.getElementById('fecha-dia').innerHTML = htmlDias;
+            document.getElementById('fecha-dia').value = hoy.getDate() < 10 ? '0'+hoy.getDate() : hoy.getDate();
+            
+            let htmlMeses = '<option value="01">Ene</option><option value="02">Feb</option><option value="03">Mar</option><option value="04">Abr</option><option value="05">May</option><option value="06">Jun</option><option value="07">Jul</option><option value="08">Ago</option><option value="09">Sep</option><option value="10">Oct</option><option value="11">Nov</option><option value="12">Dic</option>';
+            document.getElementById('fecha-mes').innerHTML = htmlMeses;
+            
+            let a = hoy.getFullYear(); document.getElementById('fecha-anio').innerHTML = `<option value="${a}">${a}</option><option value="${a+1}">${a+1}</option>`;
             actualizarFechaCompleta();
         }
 
-        window.actualizarFechaCompleta = function() {
-            let d = document.getElementById('fecha-dia').value;
-            let mVal = document.getElementById('fecha-mes').value;
-            let mTexto = mesesNombre[parseInt(mVal) - 1];
-            let a = document.getElementById('fecha-anio').value;
-
-            let fechaISO = `${a}-${mVal}-${d}`;
-            document.getElementById('inp-fecha-final').value = fechaISO;
-            document.getElementById('lbl-fecha-formateada').innerText = `${parseInt(d)} de ${mTexto} de ${a}`;
-            consultarClima();
+        function actualizarFechaCompleta() {
+            let d = document.getElementById('fecha-dia').value; let m = document.getElementById('fecha-mes').value; let a = document.getElementById('fecha-anio').value;
+            document.getElementById('inp-fecha-final').value = `${a}-${m}-${d}`;
         }
+        function consultarClima() { climaGlobalGuardado = "Condiciones Normales (Simulado)"; document.getElementById('widget-clima').style.display='block'; document.getElementById('widget-clima').innerHTML = "Clima listo."; }
 
-        window.onload = function() {
-            let htmlD = '';
-            for(let d in deptosPy) htmlD += `<option value="${d}">${d}</option>`;
-            document.getElementById('origen-depto').innerHTML = htmlD;
-            document.getElementById('dest-depto').innerHTML = htmlD;
-            actCiuOrigen();
-            actCiuDestino();
-            inicializarSelectorFecha();
-        }
-
-        window.consultarClima = async function() {
-            let fecha = document.getElementById('inp-fecha-final').value;
-            let depto = document.getElementById('dest-depto').value;
-            let widget = document.getElementById('widget-clima');
-
-            if(!fecha || !coordDeptos[depto]) return;
-
-            widget.style.display = "block";
-            widget.innerHTML = "Consultando datos meteorológicos...";
-            widget.style.color = "var(--text-muted)";
-
-            try {
-                let lat = coordDeptos[depto].lat;
-                let lon = coordDeptos[depto].lon;
-                let url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max&timezone=America/Asuncion&start_date=${fecha}&end_date=${fecha}`;
-                
-                let res = await fetch(url);
-                let data = await res.json();
-                
-                if(data.daily && data.daily.weathercode) {
-                    let code = data.daily.weathercode[0];
-                    let temp = data.daily.temperature_2m_max[0];
-                    
-                    let climaTexto = "Condiciones Normales";
-                    if(code <= 3) climaTexto = "Despejado / Soleado";
-                    if(code >= 51 && code <= 67) climaTexto = "Precipitación Leve a Moderada";
-                    if(code >= 80 && code <= 82) climaTexto = "Precipitación Fuerte";
-                    if(code >= 95) climaTexto = "ALERTA: Tormenta Eléctrica";
-
-                    let mensajeFinal = `${climaTexto} (${temp}°C Máx)`;
-                    climaGlobalGuardado = mensajeFinal;
-                    
-                    widget.style.color = "white";
-                    widget.innerHTML = `Pronóstico en Destino: <br><span style="color:var(--primary); font-size:1rem;">${mensajeFinal}</span>`;
-                } else {
-                    widget.innerHTML = "Pronóstico disponible únicamente para los próximos 14 días.";
-                    climaGlobalGuardado = "Fecha distante";
-                }
-            } catch(e) {
-                widget.innerHTML = "Servicio meteorológico no disponible temporalmente.";
-                climaGlobalGuardado = "Sin datos";
-            }
-        }
-
-        window.enviarViaje = function() {
+        function enviarViaje() {
             let data = {
                 tipo: document.getElementById('inp-tipo-viaje').value,
                 fecha: document.getElementById('inp-fecha-final').value,
                 pasajeros: document.getElementById('inp-pasajeros').value,
-                origen: document.getElementById('origen-ciudad').value + " (" + document.getElementById('origen-depto').value + ")",
-                destino: document.getElementById('dest-lugar').value + " - " + document.getElementById('dest-ciudad').value + " (" + document.getElementById('dest-depto').value + ")",
+                origen: document.getElementById('origen-ciudad').value,
+                destino: document.getElementById('dest-lugar').value + " - " + document.getElementById('dest-ciudad').value,
                 cliente: document.getElementById('inp-cliente').value.trim(),
                 telefono: document.getElementById('inp-telefono').value.trim(),
-                clima: climaGlobalGuardado,
-                estado: "Esperando Propuestas"
+                clima: climaGlobalGuardado, estado: "Esperando Propuestas"
             };
-
-            if(!data.cliente || !data.telefono || !document.getElementById('dest-lugar').value.trim()) { 
-                mostrarNotificacion("Complete todos los campos obligatorios."); 
-                return; 
-            }
-
+            if(!data.cliente || !data.telefono || !document.getElementById('dest-lugar').value.trim()) { mostrarNotificacion("Complete todos los campos."); return; }
             db.ref('viajes_turismo/pendientes').push(data).then(() => {
-                mostrarNotificacion("¡Viaje publicado con éxito!");
+                mostrarNotificacion("¡Viaje publicado!");
                 setTimeout(() => location.reload(), 2000);
-            }).catch(e => mostrarNotificacion("Error al publicar: " + e.message));
-        }
-
-        window.registrarChofer = function() {
-            let nombre = document.getElementById('reg-nombre').value.trim();
-            let vehiculo = document.getElementById('reg-vehiculo').value.trim();
-            let telefono = document.getElementById('reg-telefono').value.trim();
-            let email = document.getElementById('reg-email').value.trim();
-            let pass = document.getElementById('reg-pass').value.trim();
-
-            if(!nombre || !vehiculo || !email || !pass) { 
-                mostrarNotificacion("Complete todos los campos del registro."); 
-                return; 
-            }
-            if(pass.length < 6) {
-                mostrarNotificacion("La contraseña debe tener al menos 6 caracteres.");
-                return;
-            }
-
-            let btn = document.getElementById('btn-reg');
-            btn.innerText = "Registrando en servidor...";
-            btn.disabled = true;
-
-            auth.createUserWithEmailAndPassword(email, pass).then((userCred) => {
-                let perfil = { nombre: nombre, vehiculo: vehiculo, telefono: telefono, email: email };
-                db.ref(`choferes_turismo/${userCred.user.uid}`).set(perfil).then(() => {
-                    choferPerfilData = perfil;
-                    mostrarNotificacion("¡Cuenta creada correctamente!");
-                    abrirPanelChofer(userCred.user.uid, nombre);
-                }).catch(e => {
-                    btn.innerText = "Crear Cuenta Conductor";
-                    btn.disabled = false;
-                    mostrarNotificacion("Error al guardar perfil: " + e.message);
-                });
-            }).catch(e => {
-                btn.innerText = "Crear Cuenta Conductor";
-                btn.disabled = false;
-                mostrarNotificacion("Error Auth: " + e.message);
-            });
-        }
-
-        window.loginChofer = function() {
-            let email = document.getElementById('log-email').value.trim();
-            let pass = document.getElementById('log-pass').value.trim();
-
-            if(!email || !pass) {
-                mostrarNotificacion("Ingrese correo y contraseña.");
-                return;
-            }
-
-            let btn = document.getElementById('btn-login');
-            btn.innerText = "Verificando acceso...";
-            btn.disabled = true;
-
-            auth.signInWithEmailAndPassword(email, pass).then((userCred) => {
-                db.ref(`choferes_turismo/${userCred.user.uid}`).once('value').then((snap) => {
-                    btn.innerText = "Ingresar al Panel";
-                    btn.disabled = false;
-                    if(snap.exists()) {
-                        choferPerfilData = snap.val();
-                        abrirPanelChofer(userCred.user.uid, choferPerfilData.nombre);
-                    } else {
-                        choferPerfilData = { nombre: "Conductor", vehiculo: "Vehículo Registrado", telefono: "0981000000", email: email };
-                        db.ref(`choferes_turismo/${userCred.user.uid}`).set(choferPerfilData);
-                        abrirPanelChofer(userCred.user.uid, "Conductor");
-                    }
-                });
-            }).catch(e => {
-                btn.innerText = "Ingresar al Panel";
-                btn.disabled = false;
-                mostrarNotificacion("Error de acceso: " + e.message);
-            });
-        }
-
-        window.abrirPanelChofer = function(uid, nombre) {
-            document.getElementById('panel-nombre-chofer').innerText = "Panel de " + nombre;
-            cambiarVista('vista-panel-chofer');
-            cargarViajesPendientesChofer(uid);
-        }
-
-        window.cerrarSesion = function() {
-            auth.signOut().then(() => { 
-                choferPerfilData = null; 
-                document.getElementById('log-email').value = '';
-                document.getElementById('log-pass').value = '';
-                cambiarVista('vista-inicio'); 
-            });
-        }
-
-        window.enviarOfertaPrecio = function(viajeId) {
-            let precioInp = document.getElementById(`precio-${viajeId}`).value.trim();
-            if(!precioInp || isNaN(precioInp)) { mostrarNotificacion("Ingrese una tarifa válida en Guaraníes."); return; }
-
-            let ofertaData = {
-                choferNombre: choferPerfilData ? choferPerfilData.nombre : "Conductor",
-                choferVehiculo: choferPerfilData ? choferPerfilData.vehiculo : "Vehículo",
-                choferTelefono: choferPerfilData ? choferPerfilData.telefono : "Sin número",
-                precio: parseInt(precioInp).toLocaleString('es-PY') + " Gs.",
-                fechaOferta: new Date().toLocaleTimeString()
-            };
-
-            db.ref(`viajes_turismo/pendientes/${viajeId}/ofertas/${auth.currentUser.uid}`).set(ofertaData).then(() => {
-                mostrarNotificacion("¡Tarifa guardada correctamente!");
-            });
-        }
-
-        function cargarViajesPendientesChofer(choferUid) {
-            db.ref('viajes_turismo/pendientes').on('value', (snapshot) => {
-                let html = '';
-                if(snapshot.exists()){
-                    let listaViajes = [];
-                    snapshot.forEach(child => listaViajes.push({ id: child.key, ...child.val() }));
-
-                    listaViajes.forEach(v => {
-                        let deptoDestinoMatch = v.destino.match(/\(([^)]+)\)/);
-                        let deptoDestino = deptoDestinoMatch ? deptoDestinoMatch[1] : v.destino;
-
-                        let viajesDeRetorno = listaViajes.filter(otro => 
-                            otro.id !== v.id && 
-                            otro.origen.includes(deptoDestino) && 
-                            new Date(otro.fecha) >= new Date(v.fecha)
-                        );
-
-                        let alertaOportunidadHtml = '';
-                        if(viajesDeRetorno.length > 0) {
-                            let retorno = viajesDeRetorno[0]; 
-                            alertaOportunidadHtml = `
-                            <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--success); padding: 12px; border-radius: 8px; margin-top: 12px; margin-bottom: 12px;">
-                                <p style="color: var(--success); font-weight: bold; margin: 0 0 5px 0; font-size: 0.85rem;">🔄 OPORTUNIDAD DE RETORNO DETECTADA</p>
-                                <p style="margin: 0; font-size: 0.8rem; color: white;">Hay otro cliente buscando viajar desde <b>${retorno.origen}</b> el <b>${retorno.fecha}</b>.</p>
-                            </div>`;
-                        }
-
-                        let linkGmaps = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(v.origen)}&destination=${encodeURIComponent(v.destino)}`;
-                        let miOferta = (v.ofertas && v.ofertas[choferUid]) ? v.ofertas[choferUid] : null;
-                        
-                        // ERROR DE SINTAXIS REPARADO: Se eliminó el guion roto
-                        let textoWpp = miOferta 
-                            ? `Hola ${v.cliente}, vi tu solicitud en TurismoTrips para viajar a ${v.destino}. Mi propuesta es de *${miOferta.precio}* con vehículo ${miOferta.choferVehiculo} (${miOferta.choferNombre}). ¿Coordinamos?`
-                            : `Hola ${v.cliente}, vi tu solicitud en TurismoTrips para viajar a ${v.destino}. ¿Conversamos sobre el traslado?`;
-                        
-                        let linkWppDirecto = `https://wa.me/595${v.telefono.replace(/^0+/, '')}?text=${encodeURIComponent(textoWpp)}`;
-                        let alertaClima = v.clima.includes("Tormenta") ? `background: rgba(239, 68, 68, 0.2); color: var(--danger);` : ``;
-
-                        html += `
-                        <div class="viaje-card">
-                            <h4>Ruta: ${v.origen} ➔ ${v.destino}</h4>
-                            <p>📅 Fecha: <strong>${v.fecha}</strong> | 👥 Pasajeros: <strong>${v.pasajeros}</strong></p>
-                            <p>👤 Pasajero: <strong>${v.cliente}</strong> <span class="badge-estado">${v.estado}</span></p>
-                            <p style="margin-top:8px;"><span class="badge-clima" style="${alertaClima}">Clima: ${v.clima}</span></p>
-
-                            ${alertaOportunidadHtml}
-
-                            <div style="background:#020617; border:1px dashed var(--border); padding:12px; border-radius:8px; margin-top:12px;">
-                                <label style="font-size:0.8rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:6px;">TU PROPUESTA DE TARIFA (Gs.):</label>
-                                <div style="display:flex; gap:10px;">
-                                    <input type="number" id="precio-${v.id}" placeholder="Ej: 250000" value="${miOferta ? miOferta.precio.replace(/[^0-9]/g, '') : ''}" style="padding:10px;">
-                                    <button class="btn-opcion principal" style="margin-bottom:0; width:auto; padding:10px 15px; font-size:0.85rem;" onclick="enviarOfertaPrecio('${v.id}')">
-                                        ${miOferta ? 'Actualizar' : 'Enviar Tarifa'}
-                                    </button>
-                                </div>
-                                ${miOferta ? `<p style="font-size:0.75rem; color:var(--success); margin:6px 0 0 0;">✔ Oferta guardada: <strong>${miOferta.precio}</strong></p>` : ''}
-                            </div>
-
-                            <div class="grid-2" style="margin-top:12px;">
-                                <button class="btn-secundario" style="margin-top:0; padding:10px; font-size:0.85rem;" onclick="window.open('${linkGmaps}', '_blank')">Evaluar Ruta GPS</button>
-                                <button class="btn-opcion" style="margin-bottom:0; padding:10px; font-size:0.85rem; border-color:var(--primary);" onclick="window.open('${linkWppDirecto}', '_blank')">WhatsApp Pasajero</button>
-                            </div>
-                        </div>`;
-                    });
-                } else {
-                    html = "<p style='color:white;'>No hay solicitudes activas en este momento.</p>";
-                }
-                document.getElementById('contenedor-viajes-chofer').innerHTML = html;
             });
         }
     </script>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Chofer</title>
+    <style>
+        :root { --primary: #0284c7; --bg-base: #0f172a; --bg-card: #1e293b; --text-muted: #94a3b8; --border: #334155; --success: #10b981; }
+        body { font-family: sans-serif; background: var(--bg-base); margin: 0; display: flex; justify-content: center; padding-top: 20px; }
+        .card { background: var(--bg-card); padding: 30px; border-radius: 12px; width: 100%; max-width: 550px; border: 1px solid var(--border); box-sizing: border-box;}
+        .header { display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px;}
+        h3 { color: white; margin: 0; }
+        .viaje-card { background: #020617; border: 1px solid var(--border); padding: 18px; border-radius: 10px; margin-bottom: 15px; color: white;}
+        .viaje-card p { font-size: 0.9rem; color: var(--text-muted); margin: 5px 0;}
+        .btn-opcion { background: var(--primary); border: none; color: white; padding: 10px; border-radius: 8px; cursor: pointer; }
+        .btn-secundario { background: transparent; color: white; border: 1px solid var(--border); padding: 10px; border-radius: 8px; cursor: pointer;}
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="header">
+            <h3 id="panel-nombre">Cargando Panel...</h3>
+            <button class="btn-secundario" style="border:none; color:var(--text-muted); text-decoration:underline;" onclick="cerrarSesion()">Salir</button>
+        </div>
+        <p style="color:white; font-weight:bold;">Viajes Disponibles:</p>
+        <div id="contenedor-viajes">Cargando...</div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-database-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAg6rZnqUFgTcRiAHA0AWvYR-imovVb_0s",
+            authDomain: "gestorinmobiliario-d68b3.firebaseapp.com",
+            projectId: "gestorinmobiliario-d68b3",
+            databaseURL: "https://gestorinmobiliario-d68b3-default-rtdb.firebaseio.com"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth(); const db = firebase.database();
+        let choferData = null;
+
+        // Validar seguridad de la página
+        auth.onAuthStateChanged(user => {
+            if(user) {
+                db.ref(`choferes_turismo/${user.uid}`).once('value').then(snap => {
+                    if(snap.exists()) {
+                        choferData = snap.val();
+                        document.getElementById('panel-nombre').innerText = "Panel de " + choferData.nombre;
+                        cargarViajes(user.uid);
+                    }
+                });
+            } else {
+                window.location.href = 'login.html'; // Si no está logueado, lo patea al login
+            }
+        });
+
+        function cerrarSesion() {
+            auth.signOut().then(() => { window.location.href = 'index.html'; });
+        }
+
+        function enviarOferta(viajeId) {
+            let precio = document.getElementById(`precio-${viajeId}`).value;
+            if(!precio) return alert("Ingrese un precio");
+            let oferta = {
+                choferNombre: choferData.nombre, choferVehiculo: choferData.vehiculo,
+                choferTelefono: choferData.telefono, precio: precio + " Gs."
+            };
+            db.ref(`viajes_turismo/pendientes/${viajeId}/ofertas/${auth.currentUser.uid}`).set(oferta).then(() => {
+                alert("Tarifa enviada");
+            });
+        }
+
+        function cargarViajes(uid) {
+            db.ref('viajes_turismo/pendientes').on('value', snap => {
+                let html = '';
+                if(snap.exists()) {
+                    snap.forEach(child => {
+                        let v = child.val(); let id = child.key;
+                        let miOferta = (v.ofertas && v.ofertas[uid]) ? v.ofertas[uid].precio : "";
+                        let txtWpp = `Hola ${v.cliente}, propongo ${miOferta} por el viaje a ${v.destino}`;
+                        
+                        html += `
+                        <div class="viaje-card">
+                            <h4 style="margin:0 0 10px 0;">${v.origen} ➔ ${v.destino}</h4>
+                            <p>📅 ${v.fecha} | 👥 Pasajeros: ${v.pasajeros}</p>
+                            <div style="background:#1e293b; padding:10px; margin-top:10px; border-radius:8px;">
+                                <input type="number" id="precio-${id}" placeholder="Tu tarifa (Gs)" value="${miOferta.replace(/[^0-9]/g, '')}" style="padding:8px; border-radius:5px; border:none; width:120px;">
+                                <button class="btn-opcion" onclick="enviarOferta('${id}')">Fijar Tarifa</button>
+                                <button class="btn-secundario" onclick="window.open('https://wa.me/595${v.telefono.replace(/^0+/, '')}?text=${encodeURIComponent(txtWpp)}')">WhatsApp</button>
+                            </div>
+                        </div>`;
+                    });
+                } else { html = "<p>No hay viajes activos.</p>"; }
+                document.getElementById('contenedor-viajes').innerHTML = html;
+            });
+        }
+    </script>
+</body>
+</html>

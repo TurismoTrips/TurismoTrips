@@ -207,8 +207,11 @@
     <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-database-compat.js"></script>
 
     <script>
+        // CONFIGURACIÓN DE FIREBASE CORREGIDA Y COMPLETA
         const firebaseConfig = {
             apiKey: "AIzaSyAg6rZnqUFgTcRiAHA0AWvYR-imovVb_0s",
+            authDomain: "gestorinmobiliario-d68b3.firebaseapp.com",
+            projectId: "gestorinmobiliario-d68b3",
             databaseURL: "https://gestorinmobiliario-d68b3-default-rtdb.firebaseio.com"
         };
         
@@ -552,6 +555,7 @@
                         let linkGmaps = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(v.origen)}&destination=${encodeURIComponent(v.destino)}`;
                         let miOferta = (v.ofertas && v.ofertas[choferUid]) ? v.ofertas[choferUid] : null;
                         
+                        // ERROR DE SINTAXIS REPARADO: Se eliminó el guion roto
                         let textoWpp = miOferta 
                             ? `Hola ${v.cliente}, vi tu solicitud en TurismoTrips para viajar a ${v.destino}. Mi propuesta es de *${miOferta.precio}* con vehículo ${miOferta.choferVehiculo} (${miOferta.choferNombre}). ¿Coordinamos?`
                             : `Hola ${v.cliente}, vi tu solicitud en TurismoTrips para viajar a ${v.destino}. ¿Conversamos sobre el traslado?`;

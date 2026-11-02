@@ -108,7 +108,6 @@
             });
         }
 
-        // Función para formatear la fecha a un formato legible con día de la semana
         function formatearFechaBonita(fechaStr) {
             if(!fechaStr) return "Fecha no especificada";
             let partes = fechaStr.split('-');
@@ -147,7 +146,24 @@
                 let html = '';
                 if(snapshot.exists()){
                     let listaViajes = [];
-                    snapshot.forEach(child => listaViajes.push({ id: child.key, ...child.val() }));
+                    snapshot.forEach(child => {
+                        let val = child.val();
+                        listaViajes.push({ 
+                            id: child.key, 
+                            tipo: val.tipo || 'Traslado',
+                            fecha: val.fecha || 'Fecha no especificada',
+                            pasajeros: val.pasajeros || '1',
+                            origen: val.origen || 'Origen no especificado',
+                            destino: val.destino || 'Destino no especificado',
+                            cliente: val.cliente || 'Pasajero',
+                            telefono: val.telefono || '0981000000',
+                            clima: val.clima || 'Normal',
+                            estado: val.estado || 'Pendiente',
+                            ofertas: val.ofertas || {}
+                        });
+                    });
+
+                    listaViajes.reverse();
 
                     listaViajes.forEach(v => {
                         let linkGmaps = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(v.origen)}&destination=${encodeURIComponent(v.destino)}`;
@@ -166,8 +182,8 @@
                         <div class="viaje-card">
                             <h4>Ruta: ${v.origen} ➔ ${v.destino}</h4>
                             <p>📅 Fecha: <strong>${fechaLegible}</strong> | 👥 Pasajeros: <strong>${v.pasajeros}</strong></p>
-                            <p>👤 Pasajero: <strong>${v.cliente}</strong> <span class="badge-estado">${v.estado || 'Pendiente'}</span></p>
-                            <p style="margin-top:8px;"><span class="badge-clima" style="${alertaClima}">Clima: ${v.clima || 'Normal'}</span></p>
+                            <p>👤 Pasajero: <strong>${v.cliente}</strong> <span class="badge-estado">${v.estado}</span></p>
+                            <p style="margin-top:8px;"><span class="badge-clima" style="${alertaClima}">Clima: ${v.clima}</span></p>
 
                             <div style="background:#020617; border:1px dashed var(--border); padding:12px; border-radius:8px; margin-top:12px;">
                                 <label style="font-size:0.8rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:6px;">TU PROPUESTA DE TARIFA (Gs.):</label>

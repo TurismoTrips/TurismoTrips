@@ -71,7 +71,7 @@
             </div>
 
             <div class="form-group">
-                <label>Fecha del Viaje (Con Día de la Semana)</label>
+                <label>Fecha del Viaje</label>
                 <div class="grid-3">
                     <select id="fecha-dia" onchange="actualizarFechaCompleta()"></select>
                     <select id="fecha-mes" onchange="actualizarFechaCompleta()"></select>
@@ -135,26 +135,26 @@
             setTimeout(() => { toast.classList.remove('activa'); }, 4000);
         }
 
-        // TODOS LOS DEPARTAMENTOS Y CIUDADES DE PARAGUAY RESTAURADOS
+        // LISTA DE DEPARTAMENTOS CON TODAS SUS CIUDADES COMPLETAS
         const deptosPy = {
             "Asunción (Capital)": ["Asunción"],
             "Central": ["Itauguá", "Areguá", "Capiatá", "Fernando de la Mora", "Guarambaré", "Itá", "J. Augusto Saldívar", "Lambaré", "Limpio", "Luque", "Mariano R. Alonso", "Nueva Italia", "Ñemby", "San Antonio", "San Lorenzo", "Villa Elisa", "Villeta", "Ypacaraí", "Ypané"],
-            "Cordillera": ["Caacupé", "Altos", "Arroyos y Esteros", "Atyrá", "Caraguatay", "Emboscada", "Eusebio Ayala", "Isla Pucú", "Itacurubí de la Cord.", "Piribebuy", "San Bernardino", "Tobatí"],
-            "Paraguarí": ["Paraguarí", "Acahay", "Caapucú", "Carapeguá", "Escobar", "La Colmena", "Mbuyapey", "Pirayú", "Quiindy", "Quyquyhó", "San Roque González", "Sapucai", "Yaguarón", "Ybycuí"],
-            "Alto Paraná": ["Ciudad del Este", "Hernandarias", "Minga Guazú", "Presidente Franco", "Santa Rita", "Yguazú"],
-            "Itapúa": ["Encarnación", "Bella Vista", "Carmen del Paraná", "Colonias Unidas", "Coronel Bogado", "Hohenau", "Obligado", "San Cosme y Damián"],
-            "Caaguazú": ["Coronel Oviedo", "Caaguazú", "J. Eulogio Estigarribia (Campo 9)", "San José de los Arroyos"],
-            "Guairá": ["Villarrica", "Colonia Independencia", "Itapé", "Mbocayaty"],
-            "Concepción": ["Concepción", "Horqueta", "Loreto", "Yby Yaú"],
-            "San Pedro": ["San Pedro del Ycuamandyyú", "Santa Rosa del Aguaray", "San Estanislao (Santaní)"],
-            "Caazapá": ["Caazapá", "Atyrá", "Yuty"],
-            "Misiones": ["San Juan Bautista", "Ayolas", "San Ignacio", "Santa Rosa"],
-            "Ñeembucú": ["Pilar", "Alberdi", "Cerrito"],
-            "Amambay": ["Pedro Juan Caballero", "Bella Vista Norte", "Capitán Bado"],
-            "Canindeyú": ["Salto del Guairá", "Curuguaty"],
-            "Presidente Hayes": ["Villa Hayes", "Benjamín Aceval"],
-            "Boquerón": ["Filadelfia", "Loma Plata", "Neuland"],
-            "Alto Paraguay": ["Fuerte Olimpo", "Bahía Negra"]
+            "Cordillera": ["Caacupé", "Altos", "Arroyos y Esteros", "Atyrá", "Caraguatay", "Emboscada", "Eusebio Ayala", "Isla Pucú", "Itacurubí de la Cordillera", "Juan de Mena", "Loma Grande", "Mbocayaty del Yhaguy", "Nueva Colombia", "Piribebuy", "Primero de Marzo", "San Bernardino", "Santa Elena", "Tobatí", "Valenzuela"],
+            "Paraguarí": ["Paraguarí", "Acahay", "Caapucú", "Carapeguá", "Escobar", "La Colmena", "Mbuyapey", "Pirayú", "Quiindy", "Quyquyhó", "San Roque González de Santa Cruz", "Sapucai", "Yaguarón", "Ybycuí", "Ybytimí"],
+            "Alto Paraná": ["Ciudad del Este", "Doctor Juan León Mallorquín", "Domingo Martínez de Irala", "Hernandarias", "Iruña", "Itakyry", "Juan E. O'Leary", "Los Cedrales", "Minga Guazú", "Minga Porá", "Ñacunday", "Presidente Franco", "San Alberto", "San Cristóbal", "Santa Fe del Paraná", "Santa Rita", "Tavapy", "Yguazú"],
+            "Itapúa": ["Encarnación", "Alto Verá", "Bella Vista", "Cambyretá", "Carmen del Paraná", "Coronel Bogado", "<bos>3 de Febrero", "Edelira", "Fram", "General Artigas", "General Delgado", "Hohenau", "Itapúa Poty", "Jesús", "José Leandro Oviedo", "La Paz", "Mayore Otaño", "Naranjito", "Natalio", "Nueva Alborada", "Obligado", "Olegario Víctor Andrade", "Pirapó", "San Cosme y Damián", "San Juan del Paraná", "San Pedro del Paraná", "San Rafael del Paraná", "Tomás Romero Pereira", "Trinidad", "Yatytay"],
+            "Caaguazú": ["Coronel Oviedo", "Caaguazú", "Carayao", "Doctor J. Eulogio Estigarribia (Campo 9)", "Doctor Juan Manuel Frutos", "José Domingo Ocampos", "La Pastora", "Margarita", "Nueva Londres", "Raúl Arsenio Oviedo", "Repatriación", "R.I. 3 Corrales", "San Joaquín", "San José de los Arroyos", "Santa Rosa del Mbutuy", "Simón Bolívar", "Tres de Febrero", "Vaquería", "Yhú"],
+            "Guairá": ["Villarrica", "Abaroa", "Buena Vista", "Coronel Martínez", "Félix Pérez Cardozo", "Gamarra", "General Eugenio A. Garay", "Independencia", "Itapé", "Iturbe", "José Fassardi", "Mbocayaty del Guairá", "Nadal", "Ñumí", "Paso Yobái", "San Salvador", "Tebicuary", "Yataity del Guairá"],
+            "Concepción": ["Concepción", "Arroyito", "Belén", "Horqueta", "Loreto", "Paso Horqueta", "San Lázaro", "Yby Yaú"],
+            "San Pedro": ["San Pedro del Ycuamandyyú", "Antequera", "Capiibary", "Choré", "General Elizardo Aquino", "General Resquín", "Guayaibí", "Itacurubí del Rosario", "Liberación", "Lima", "Nueva Germania", "San Estanislao (Santaní)", "San Pablo", "San Vicente Pancholo", "Santa Rosa del Aguaray", "Tacuatí", "Unión"],
+            "Caazapá": ["Caazapá", "Abaí", "Buena Vista", "Doctor Moisés S. Bertoni", "Fulgencio Yegros", "General Higinio Morínigo", "Maciel", "San Juan Nepomuceno", "Tavaí", "Yuty"],
+            "Misiones": ["San Juan Bautista", "Ayolas", "San Ignacio", "San Miguel", "San Patricio", "Santa María", "Santa Rosa", "Santiago", "Villa Florida"],
+            "Ñeembucú": ["Pilar", "Alberdi", "Cerrito", "Desmochados", "General José Eduvigis Díaz", "Guazú Cuá", "Humuatá", "Isla Umbú", "Laureles", "Mayor José D. Martínez", "Paso de Patria", "San Juan Bautista del Ñeembucú", "Tacuaras", "Villa Franca", "Villalbín", "Villeta"],
+            "Amambay": ["Pedro Juan Caballero", "Bella Vista Norte", "Capitán Bado", "Zanja Pytá"],
+            "Canindeyú": ["Salto del Guairá", "Corpus Christi", "Curuguaty", "General Francisco Caballero Álvarez", "Itanará", "Katueté", "La Paloma del Espíritu Santo", "Mariscal Francisco Solano López", "Nueva Esperanza", "Puerto Adela", "Villa Ygatimí", "Yby Pytã", "Ypejhú"],
+            "Presidente Hayes": ["Villa Hayes", "Benjamín Aceval", "Falcón", "General José María Bruguez", "Nanawa", "Puerto Pinasco", "Tte. 1° Manuel Irala Fernández"],
+            "Boquerón": ["Filadelfia", "Loma Plata", "Mariscal Estigarribia", "Neuland"],
+            "Alto Paraguay": ["Fuerte Olimpo", "Bahía Negra", "Carmelo Peralta", "Puerto Casado"]
         };
 
         const mesesNombre = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];

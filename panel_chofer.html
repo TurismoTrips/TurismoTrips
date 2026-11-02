@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TurismoTrips | Panel de Conductor</title>
+    <title>TurismoTrips | Panel de Conductor en Vivo</title>
     <style>
         :root { --primary: #0284c7; --bg-base: #0f172a; --bg-card: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --border: #334155; --success: #10b981; --warning: #f59e0b; --danger: #ef4444; }
         body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-base); color: var(--text-main); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; box-sizing: border-box;}
@@ -49,7 +49,9 @@
                 <button class="btn-volver" onclick="cerrarSesion()">Cerrar Sesión</button>
             </div>
             
-            <p style="text-align:left; color:white; font-weight:bold; margin-bottom: 15px;">Bolsa de Viajes Disponibles en Paraguay:</p>
+            <p style="text-align:left; color:white; font-weight:bold; margin-bottom: 5px;">Bolsa de Viajes en Tiempo Real:</p>
+            <p id="info-gps-chofer" style="font-size:0.8rem; color:var(--success); margin-bottom: 15px;">🛰️ Activando GPS en vivo...</p>
+
             <div id="contenedor-viajes-chofer">
                 <p style="color:var(--text-muted); font-size:0.9rem;">Cargando solicitudes...</p>
             </div>
@@ -69,13 +71,13 @@
             databaseURL: "https://gestorinmobiliario-d68b3-default-rtdb.firebaseio.com"
         };
         
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.database();
         const auth = firebase.auth();
 
         let choferPerfilData = null;
+        let choferLatActual = null;
+        let choferLonActual = null;
         const mesesNombre = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
         window.mostrarNotificacion = function(mensaje) {
@@ -85,15 +87,52 @@
             setTimeout(() => { toast.classList.remove('activa'); }, 4000);
         }
 
+        // Iniciar rastreo GPS en tiempo real del Chofer
+        function iniciarRastreoChofer(uid) {
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(position => {
+                    choferLatActual = position.coords.latitude;
+                    choferLonActual = position.coords.longitude;
+                    
+                    // Actualizar posición en tiempo real en Firebase
+                    db.ref(`choferes_turismo/${uid}/ubicacionEnVivo`).set({
+                        lat: choferLatActual,
+                        lon: choferLonActual,
+                        ultimaActualizacion: new Date().toLocaleTimeString()
+                    });
+                    
+                    document.getElementById('info-gps-chofer').innerText = `🛰️ GPS Activo (Lat: ${choferLatActual.toFixed(4)}, Lon: ${choferLonActual.toFixed(4)})`;
+                }, error => {
+                    document.getElementById('info-gps-chofer').innerText = "⚠️ GPS inactivo (Permiso denegado)";
+                }, { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 });
+            } else {
+                document.getElementById('info-gps-chofer').innerText = "⚠️ Tu navegador no soporta GPS.";
+            }
+        }
+
+        // Calcular distancia aproximada en kilómetros entre dos coordenadas GPS (Fórmula Haversine)
+        function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
+            let R = 6371; // Radio de la tierra en km
+            let dLat = (lat2 - lat1) * Math.PI / 180;
+            let dLon = (lon2 - lon1) * Math.PI / 180;
+            let a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                    Math.sin(dLon/2) * Math.sin(dLon/2);
+            let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return (R * c).toFixed(1);
+        }
+
         auth.onAuthStateChanged(user => {
             if(user) {
                 db.ref(`choferes_turismo/${user.uid}`).once('value').then(snap => {
                     if(snap.exists()) {
                         choferPerfilData = snap.val();
                         document.getElementById('panel-nombre-chofer').innerText = "Panel de " + choferPerfilData.nombre;
+                        iniciarRastreoChofer(user.uid);
                         cargarViajesPendientesChofer(user.uid);
                     } else {
                         choferPerfilData = { nombre: "Conductor", vehiculo: "Vehículo Registrado", telefono: "0981000000" };
+                        iniciarRastreoChofer(user.uid);
                         cargarViajesPendientesChofer(user.uid);
                     }
                 });
@@ -103,25 +142,18 @@
         });
 
         window.cerrarSesion = function() {
-            auth.signOut().then(() => { 
-                window.location.href = 'login.html'; 
-            });
+            auth.signOut().then(() => { window.location.href = 'login.html'; });
         }
 
         function formatearFechaBonita(fechaStr) {
             if(!fechaStr) return "Fecha no especificada";
             let partes = fechaStr.split('-');
             if(partes.length !== 3) return fechaStr;
-            let anio = parseInt(partes[0]);
-            let mes = parseInt(partes[1]) - 1;
-            let dia = parseInt(partes[2]);
-
+            let anio = parseInt(partes[0]), mes = parseInt(partes[1]) - 1, dia = parseInt(partes[2]);
             let fechaObj = new Date(anio, mes, dia);
             if(isNaN(fechaObj.getTime())) return fechaStr;
-
             let nombreDiaLargo = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"][fechaObj.getDay()];
-            let nombreMes = mesesNombre[mes];
-            return `${nombreDiaLargo}, ${dia} de ${nombreMes} de ${anio}`;
+            return `${nombreDiaLargo}, ${dia} de ${mesesNombre[mes]} de ${anio}`;
         }
 
         window.enviarOfertaPrecio = function(viajeId) {
@@ -129,9 +161,9 @@
             if(!precioInp || isNaN(precioInp)) { mostrarNotificacion("Ingrese una tarifa válida en Guaraníes."); return; }
 
             let ofertaData = {
-                choferNombre: choferPerfilData ? choferPerfilData.nombre : "Conductor",
-                choferVehiculo: choferPerfilData ? choferPerfilData.vehiculo : "Vehículo",
-                choferTelefono: choferPerfilData ? choferPerfilData.telefono : "Sin número",
+                choferNombre: choferPerfilData.nombre,
+                choferVehiculo: choferPerfilData.vehiculo,
+                choferTelefono: choferPerfilData.telefono,
                 precio: parseInt(precioInp).toLocaleString('es-PY') + " Gs.",
                 fechaOferta: new Date().toLocaleTimeString()
             };
@@ -150,7 +182,6 @@
                         let val = child.val();
                         listaViajes.push({ 
                             id: child.key, 
-                            tipo: val.tipo || 'Traslado',
                             fecha: val.fecha || 'Fecha no especificada',
                             pasajeros: val.pasajeros || '1',
                             origen: val.origen || 'Origen no especificado',
@@ -159,6 +190,8 @@
                             telefono: val.telefono || '0981000000',
                             clima: val.clima || 'Normal',
                             estado: val.estado || 'Pendiente',
+                            lat: val.lat || null,
+                            lon: val.lon || null,
                             ofertas: val.ofertas || {}
                         });
                     });
@@ -166,9 +199,20 @@
                     listaViajes.reverse();
 
                     listaViajes.forEach(v => {
-                        let linkGmaps = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(v.origen)}&destination=${encodeURIComponent(v.destino)}`;
-                        let miOferta = (v.ofertas && v.ofertas[choferUid]) ? v.ofertas[choferUid] : null;
+                        // Calcular distancia real en vivo si el GPS del chofer y pasajero están activos
+                        let distanciaTexto = "Distancia calculándose...";
+                        let puntoPartidaGps = v.origen;
+
+                        if (choferLatActual && choferLonActual && v.lat && v.lon) {
+                            let km = calcularDistanciaKm(choferLatActual, choferLonActual, v.lat, v.lon);
+                            distanciaTexto = `📍 Estás a aprox. <strong>${km} km</strong> del pasajero`;
+                            puntoPartidaGps = `${choferLatActual},${choferLonActual}`;
+                        }
+
+                        // Mapa GPS inteligente: Chofer (en vivo) -> Pasajero (origen) -> Destino Final
+                        let linkGmaps = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(puntoPartidaGps)}&destination=${encodeURIComponent(v.destino)}&waypoints=${encodeURIComponent(v.origen)}`;
                         
+                        let miOferta = (v.ofertas && v.ofertas[choferUid]) ? v.ofertas[choferUid] : null;
                         let fechaLegible = formatearFechaBonita(v.fecha);
 
                         let textoWpp = miOferta 
@@ -183,7 +227,8 @@
                             <h4>Ruta: ${v.origen} ➔ ${v.destino}</h4>
                             <p>📅 Fecha: <strong>${fechaLegible}</strong> | 👥 Pasajeros: <strong>${v.pasajeros}</strong></p>
                             <p>👤 Pasajero: <strong>${v.cliente}</strong> <span class="badge-estado">${v.estado}</span></p>
-                            <p style="margin-top:8px;"><span class="badge-clima" style="${alertaClima}">Clima: ${v.clima}</span></p>
+                            <p style="color:var(--primary); font-size:0.85rem; margin-top:4px;">${distanciaTexto}</p>
+                            <p style="margin-top:6px;"><span class="badge-clima" style="${alertaClima}">Clima: ${v.clima}</span></p>
 
                             <div style="background:#020617; border:1px dashed var(--border); padding:12px; border-radius:8px; margin-top:12px;">
                                 <label style="font-size:0.8rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:6px;">TU PROPUESTA DE TARIFA (Gs.):</label>
@@ -197,7 +242,7 @@
                             </div>
 
                             <div class="grid-2" style="margin-top:12px;">
-                                <button class="btn-secundario" onclick="window.open('${linkGmaps}', '_blank')">Evaluar Ruta GPS</button>
+                                <button class="btn-secundario" onclick="window.open('${linkGmaps}', '_blank')">Navegar GPS (En Vivo)</button>
                                 <button class="btn-opcion" style="background:#16a34a;" onclick="window.open('${linkWppDirecto}', '_blank')">WhatsApp Pasajero</button>
                             </div>
                         </div>`;

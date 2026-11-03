@@ -11,13 +11,13 @@
         .container { width: 100%; max-width: 600px; }
         .card { background: var(--bg-card); padding: 30px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.3); }
         
-        .header-modulo { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px; }
+        .header-modulo { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;}
         .header-modulo h3 { margin: 0; font-size: 1.2rem; color: white; }
         .btn-volver { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.85rem; font-weight: 600; text-decoration: underline; }
         .btn-volver:hover { color: white; }
 
         .viaje-card { background: #020617; border: 1px solid var(--border); padding: 18px; border-radius: 10px; margin-bottom: 20px; transition: 0.3s;}
-        .viaje-card.asignado { border: 2px solid var(--success); background: rgba(16, 185, 129, 0.05); } /* Borde verde si el viaje es tuyo */
+        .viaje-card.asignado { border: 2px solid var(--success); background: rgba(16, 185, 129, 0.05); }
         
         .viaje-card h4 { margin: 0 0 10px 0; color: white; font-size: 1.1rem; }
         .viaje-card p { margin: 6px 0; font-size: 0.85rem; color: var(--text-muted); }
@@ -31,7 +31,8 @@
 
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
-        .btn-compartir { background: #10b981; border: none; color: white; padding: 8px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; margin-left: 10px; }
+        .btn-compartir { background: #10b981; border: none; color: white; padding: 8px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
+        .btn-reset { background: var(--warning); border: none; color: #020617; padding: 8px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
 
         #toast-notification {
             position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%) translateY(100px);
@@ -50,8 +51,9 @@
         <div class="card">
             <div class="header-modulo">
                 <h3 id="panel-nombre-chofer">Centro de Control</h3>
-                <div>
-                    <button class="btn-compartir" onclick="compartirApp()">📲 Compartir Web</button>
+                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <button class="btn-reset" onclick="restaurarDescartados()">🔄 Ver Todos</button>
+                    <button class="btn-compartir" onclick="compartirApp()">📲 Compartir</button>
                     <button class="btn-volver" onclick="cerrarSesion()">Salir</button>
                 </div>
             </div>
@@ -96,7 +98,7 @@
             if (navigator.share) {
                 navigator.share({
                     title: 'TurismoTrips Paraguay',
-                    text: '¡Descubrí TurismoTrips! La nueva plataforma para viajes de larga distancia e interurbanos. Pedí tu viaje o registrate como conductor acá 👇',
+                    text: '¡Descubrí TurismoTrips! La nueva plataforma para viajes de larga distancia e interurbanos. Pedí tu viaje acá 👇',
                     url: linkPlataforma
                 }).catch(console.error);
             } else {
@@ -133,6 +135,18 @@
 
         window.cerrarSesion = function() { auth.signOut().then(() => { window.location.href = 'login.html'; }); }
 
+        window.restaurarDescartados = function() {
+            if(!auth.currentUser) return;
+            db.ref('viajes_turismo/pendientes').once('value').then(snapshot => {
+                if(snapshot.exists()) {
+                    snapshot.forEach(child => {
+                        db.ref(`viajes_turismo/pendientes/${child.key}/descartados/${auth.currentUser.uid}`).remove();
+                    });
+                    mostrarNotificacion("🔄 Todos los viajes ocultos han vuelto a aparecer.");
+                }
+            });
+        }
+
         function formatearFechaBonita(fechaStr) {
             if(!fechaStr) return "Fecha no especificada";
             let partes = fechaStr.split('-');
@@ -154,15 +168,14 @@
             }).then(() => mostrarNotificacion("¡Tarifa guardada correctamente!"));
         }
 
-        // SISTEMA DE GESTIÓN DE ESTADOS DEL VIAJE
         window.descartarViaje = function(viajeId) {
-            if(confirm("¿Seguro que deseas ocultar este viaje de tu lista? (No se borrará para los demás choferes)")) {
+            if(confirm("¿Seguro que deseas ocultar este viaje de tu lista?")) {
                 db.ref(`viajes_turismo/pendientes/${viajeId}/descartados/${auth.currentUser.uid}`).set(true);
             }
         }
 
         window.confirmarAcuerdo = function(viajeId) {
-            if(confirm("¿Cerraste el trato con el pasajero? El viaje se te asignará y desaparecerá para los demás choferes.")) {
+            if(confirm("¿Cerraste el trato con el pasajero? El viaje se te asignará.")) {
                 db.ref(`viajes_turismo/pendientes/${viajeId}`).update({
                     estado: 'Acuerdo Cerrado',
                     choferAsignadoUid: auth.currentUser.uid
@@ -188,10 +201,7 @@
 
                     listaViajes.forEach(v => {
                         try {
-                            // 1. Si el chofer descartó este viaje, lo saltamos y no lo dibujamos.
                             if (v.descartados && v.descartados[choferUid]) return;
-
-                            // 2. Si el viaje fue tomado por OTRO chofer distinto a ti, no lo mostramos.
                             if (v.choferAsignadoUid && v.choferAsignadoUid !== choferUid) return;
 
                             let esMio = (v.choferAsignadoUid === choferUid);
@@ -228,13 +238,11 @@
                                 : `Hola ${vCliente}, vi tu solicitud en *TurismoTrips* para viajar el ${fechaLegible} a ${vDestino}. Con vehículo ${vVehiculo} (${vNombreChofer}). ¿Conversamos sobre el traslado? \n\n📍 Guardá nuestra plataforma para futuros viajes: ${linkPlataforma}`;
                             
                             let linkWppDirecto = `https://wa.me/595${vTelefonoStr}?text=${encodeURIComponent(textoWpp)}`;
-                            let alertaClima = (v.clima && v.clima.includes("Tormenta")) ? `background: rgba(239, 68, 68, 0.2); color: var(--danger);` : ``;
+                            let alertaClima = (v.clima && (v.clima.includes("Tormenta") || v.clima.includes("ALERTA"))) ? `background: rgba(239, 68, 68, 0.2); color: var(--danger);` : ``;
 
-                            // Construcción de botones dinámica
                             let botonesAcciones = "";
 
                             if (esMio) {
-                                // Si es tu viaje asignado, muestras el botón para finalizarlo.
                                 botonesAcciones = `
                                     <div class="grid-2" style="margin-top:12px;">
                                         <button class="btn-secundario" onclick="window.open('${linkGmaps}', '_blank')">Navegar GPS</button>
@@ -243,7 +251,6 @@
                                     <button class="btn-opcion" style="background:var(--primary); margin-top:10px; width:100%;" onclick="finalizarViaje('${v.id}')">🏁 Marcar Viaje como Finalizado</button>
                                 `;
                             } else {
-                                // Si el viaje está libre, muestras el cotizador y los botones de Descartar / Confirmar
                                 botonesAcciones = `
                                     <div style="background:#020617; border:1px dashed var(--border); padding:12px; border-radius:8px; margin-top:12px;">
                                         <label style="font-size:0.8rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:6px;">TU PROPUESTA DE TARIFA (Gs.):</label>
@@ -276,7 +283,7 @@
                                 ${botonesAcciones}
                             </div>`;
                         } catch (error) {
-                            console.log("Se ignoró un viaje corrupto antiguo.");
+                            console.log("Error al renderizar viaje");
                         }
                     });
                 } else { html = "<p style='color:white;'>No hay solicitudes activas en tu zona.</p>"; }

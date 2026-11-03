@@ -82,15 +82,14 @@
         let choferPerfilData = null;
         let choferLatActual = null; let choferLonActual = null;
         const mesesNombre = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-        const linkPlataforma = "https://turismotrips.github.io";
+        const linkPlataforma = "https://turismotrips.github.io/TurismoTrips/";
 
         window.mostrarNotificacion = function(mensaje) {
             let toast = document.getElementById('toast-notification');
-            toast.innerText = mensaje; toast.classList.add('activa');
-            setTimeout(() => { toast.classList.remove('activa'); }, 4000);
+            toast.innerText = mensaje; toast.classList.add('activo');
+            setTimeout(() => { toast.classList.remove('activo'); }, 4000);
         }
 
-        // SISTEMA VIRAL DE COMPARTIR
         window.compartirApp = function() {
             if (navigator.share) {
                 navigator.share({
@@ -162,16 +161,12 @@
                     listaViajes.forEach(v => {
                         let distanciaTexto = "Calculando distancia...";
                         
-                        // Lógica A -> B -> C exacta para Google Maps
                         let ciudadChofer = choferPerfilData.ciudadBase ? choferPerfilData.ciudadBase.split(' (')[0] : "";
                         let origenLimpio = (v.origen || "").split(' (')[0];
                         let destinoLimpio = (v.destino || "").split(' (')[0];
 
-                        // Punto A: Chofer
                         let puntoA = (choferLatActual && choferLonActual) ? `${choferLatActual},${choferLonActual}` : `${ciudadChofer}, Paraguay`;
-                        // Punto B: Pasajero
                         let puntoB = (v.lat && v.lon && v.lat !== -25.28) ? `${v.lat},${v.lon}` : `${origenLimpio}, Paraguay`;
-                        // Punto C: Destino
                         let puntoC = `${destinoLimpio}, Paraguay`;
 
                         if (choferLatActual && v.lat && v.lat !== -25.28) {
@@ -180,13 +175,11 @@
                             distanciaTexto = `📍 Esperando ubicación GPS del pasajero...`;
                         }
 
-                        // Generador de Link Google Maps A->B->C
                         let linkGmaps = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(puntoA)}&destination=${encodeURIComponent(puntoC)}&waypoints=${encodeURIComponent(puntoB)}`;
                         
                         let miOferta = (v.ofertas && v.ofertas[choferUid]) ? v.ofertas[choferUid] : null;
                         let fechaLegible = formatearFechaBonita(v.fecha);
 
-                        // TEXTO VIRAL DE WHATSAPP
                         let textoWpp = miOferta 
                             ? `Hola ${v.cliente || 'Pasajero'}, vi tu solicitud en *TurismoTrips* para viajar el ${fechaLegible} a ${v.destino}. Mi propuesta es de *${miOferta.precio}* con vehículo ${choferPerfilData.vehiculo} (${choferPerfilData.nombre}). ¿Coordinamos? \n\n📍 Guardá nuestra plataforma para futuros viajes: ${linkPlataforma}`
                             : `Hola ${v.cliente || 'Pasajero'}, vi tu solicitud en *TurismoTrips* para viajar el ${fechaLegible} a ${v.destino}. Con vehículo ${choferPerfilData.vehiculo} (${choferPerfilData.nombre}). ¿Conversamos sobre el traslado? \n\n📍 Guardá nuestra plataforma para futuros viajes: ${linkPlataforma}`;

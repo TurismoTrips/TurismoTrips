@@ -2,11 +2,13 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <!-- ESTA ES LA LÍNEA QUE ARREGLA LA PANTALLA EN EL CELULAR -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>Acceso Conductores</title>
     <style>
         :root { --primary: #0284c7; --bg-base: #0f172a; --bg-card: #1e293b; --text-muted: #94a3b8; --border: #334155; }
         body { font-family: sans-serif; background: var(--bg-base); margin: 0; display: flex; justify-content: center; padding-top: 20px; padding-bottom: 30px; color: white;}
-        .card { background: var(--bg-card); padding: 30px; border-radius: 12px; width: 100%; max-width: 420px; border: 1px solid var(--border); box-sizing: border-box;}
+        .card { background: var(--bg-card); padding: 30px; border-radius: 12px; width: 90%; max-width: 420px; border: 1px solid var(--border); box-sizing: border-box;}
         h3 { color: white; margin-top: 0; }
         .form-group { margin-bottom: 14px; position: relative;}
         .form-group label { display: block; margin-bottom: 6px; font-size: 0.82rem; color: var(--text-muted); font-weight: bold;}
@@ -18,7 +20,7 @@
         .btn-ver-pass:hover { color: white; }
         .btn-opcion { background: var(--primary); border: none; color: white; padding: 15px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px;}
         .btn-secundario { background: transparent; color: var(--text-muted); border: none; width: 100%; cursor: pointer; padding: 10px; margin-top: 10px; text-decoration: underline;}
-        #toast { position: fixed; bottom: 20px; background: #ef4444; color: white; padding: 10px 20px; border-radius: 8px; display: none; z-index: 999; }
+        #toast { position: fixed; bottom: 20px; left:50%; transform:translateX(-50%); background: #ef4444; color: white; padding: 10px 20px; border-radius: 8px; display: none; z-index: 999; text-align:center; width: 80%;}
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     </style>
 </head>
@@ -49,14 +51,8 @@
         <div class="form-group"><label>WhatsApp del Chofer</label><input type="tel" id="reg-telefono" placeholder="Ej: 0981234567" autocomplete="tel"></div>
         
         <div class="grid-2">
-            <div class="form-group">
-                <label>Departamento Base</label>
-                <select id="reg-depto" onchange="actCiuChofer()"></select>
-            </div>
-            <div class="form-group">
-                <label>Ciudad Base</label>
-                <select id="reg-ciudad"></select>
-            </div>
+            <div class="form-group"><label>Departamento Base</label><select id="reg-depto" onchange="actCiuChofer()"></select></div>
+            <div class="form-group"><label>Ciudad Base</label><select id="reg-ciudad"></select></div>
         </div>
 
         <div class="form-group"><label>Correo Electrónico</label><input type="email" id="reg-email" autocomplete="email"></div>
@@ -153,13 +149,7 @@
             if(pass.length < 6) return mostrarError("La contraseña debe tener al menos 6 caracteres");
             
             auth.createUserWithEmailAndPassword(email, pass).then((userCred) => {
-                let perfil = { 
-                    nombre: nombre, 
-                    vehiculo: vehiculo, 
-                    telefono: tel, 
-                    ciudadBase: ciudad + " (" + depto + ")", 
-                    email: email 
-                };
+                let perfil = { nombre: nombre, vehiculo: vehiculo, telefono: tel, ciudadBase: ciudad + " (" + depto + ")", email: email };
                 db.ref(`choferes_turismo/${userCred.user.uid}`).set(perfil).then(() => {
                     window.location.href = 'panel_chofer.html';
                 });

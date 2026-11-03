@@ -49,14 +49,11 @@
     <div id="toast-notification">Mensaje del sistema</div>
 
     <div class="container">
-        <!-- MENÚ PRINCIPAL -->
         <div class="card" id="menu-principal">
             <h1>Turismo<span>Trips</span></h1>
             <p style="margin-bottom: 15px;">Plataforma de Transporte y Larga Distancia Paraguay</p>
             
-            <!-- BOTÓN VIRAL DE COMPARTIR -->
             <button class="btn-viral" onclick="compartirPlataforma()">📲 Compartir plataforma con amigos</button>
-
             <button class="btn-opcion principal" onclick="iniciarSolicitudViaje()">Programar un Viaje / Ruta</button>
             
             <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border);">
@@ -65,7 +62,6 @@
             </div>
         </div>
 
-        <!-- SOLICITUD DE VIAJE -->
         <div class="card" id="form-solicitud" style="display: none;">
             <h3 style="color:white; text-align:left; margin-top:0; border-bottom:1px solid var(--border); padding-bottom:12px;">Programar Viaje</h3>
             
@@ -107,7 +103,7 @@
             </div>
             <div class="form-group">
                 <label>Lugar o Referencia Específica</label>
-                <input type="text" id="dest-lugar" placeholder="Ej: Salto Cristal, Hotel o Dirección" autocomplete="off">
+                <input type="text" id="dest-lugar" placeholder="Ej: Hotel, Hospital o Dirección" autocomplete="off">
             </div>
 
             <div id="widget-clima">Cargando pronóstico meteorológico...</div>
@@ -141,13 +137,14 @@
 
         function mostrarNotificacion(mensaje) {
             let toast = document.getElementById('toast-notification');
-            toast.innerText = mensaje; toast.classList.add('activa');
-            setTimeout(() => { toast.classList.remove('activa'); }, 4000);
+            toast.innerText = mensaje; 
+            toast.classList.add('activo'); // <-- AQUÍ ESTABA EL ERROR DE ESCRITURA
+            setTimeout(() => { toast.classList.remove('activo'); }, 4000);
         }
 
-        // FUNCIÓN VIRAL DE COMPARTIR
+        // URL CORRECTA
         function compartirPlataforma() {
-            const linkPlataforma = "https://turismotrips.github.io";
+            const linkPlataforma = "https://turismotrips.github.io/TurismoTrips/";
             if (navigator.share) {
                 navigator.share({
                     title: 'TurismoTrips Paraguay',
@@ -188,14 +185,13 @@
             document.getElementById('form-solicitud').style.display='block'; 
             document.getElementById('menu-principal').style.display='none';
             
-            // Activar GPS del Pasajero en tiempo real al abrir el formulario
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(position => {
                     pasajeroLat = position.coords.latitude;
                     pasajeroLon = position.coords.longitude;
-                    mostrarNotificacion("📍 GPS del pasajero detectado con éxito");
+                    mostrarNotificacion("📍 GPS del pasajero detectado");
                 }, error => {
-                    console.log("GPS no permitido o no disponible");
+                    console.log("GPS no permitido");
                 }, { enableHighAccuracy: true });
             }
         }
@@ -276,16 +272,13 @@
             });
             document.getElementById('fecha-mes').innerHTML = htmlMeses;
 
-            inicializarSelectorFecha();
-            actCiuOrigen();
-            actCiuDestino();
+            inicializarSelectorFecha(); actCiuOrigen(); actCiuDestino();
         }
 
         function consultarClima() {
             climaGlobalGuardado = "Condiciones Normales";
-            let w = document.getElementById('widget-clima');
-            w.style.display = "block";
-            w.innerHTML = "Clima verificado para la fecha seleccionada.";
+            document.getElementById('widget-clima').style.display = "block";
+            document.getElementById('widget-clima').innerHTML = "Clima verificado para la fecha seleccionada.";
         }
 
         function enviarViaje() {
@@ -304,12 +297,12 @@
             };
 
             if(!data.cliente || !data.telefono || !document.getElementById('dest-lugar').value.trim()) { 
-                mostrarNotificacion("Complete todos los campos obligatorios."); 
+                mostrarNotificacion("⚠ Faltan datos: Ingrese su Nombre, Teléfono y Lugar Específico."); 
                 return; 
             }
 
             db.ref('viajes_turismo/pendientes').push(data).then(() => {
-                mostrarNotificacion("¡Viaje publicado con GPS activo!");
+                mostrarNotificacion("¡Viaje publicado con éxito!");
                 setTimeout(() => location.reload(), 2000);
             }).catch(e => mostrarNotificacion("Error al publicar: " + e.message));
         }

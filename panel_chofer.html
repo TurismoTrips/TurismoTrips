@@ -151,10 +151,13 @@
             if(!fechaStr) return "Fecha no especificada";
             let partes = fechaStr.split('-');
             if(partes.length !== 3) return fechaStr;
-            let fechaObj = new Date(parseInt(partes[0]), parseInt(partes[1]) - 1, parseInt(partes[2]));
+            let anio = parseInt(partes[0]);
+            let mes = parseInt(partes[1]) - 1;
+            let dia = parseInt(partes[2]);
+            let fechaObj = new Date(anio, mes, dia);
             if(isNaN(fechaObj.getTime())) return fechaStr;
             let dias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-            return `${dias[fechaObj.getDay()]}, ${parseInt(partes[2])} de ${mesesNombre[parseInt(partes[1]) - 1]} de ${partes[0]}`;
+            return `${dias[fechaObj.getDay()]}, ${dia} de ${mesesNombre[mes]} de ${anio}`;
         }
 
         window.enviarOfertaPrecio = function(viajeId) {
@@ -283,7 +286,7 @@
                                 ${botonesAcciones}
                             </div>`;
                         } catch (error) {
-                            console.log("Error al renderizar viaje");
+                            console.error("Error al renderizar el viaje ID:", v.id, error);
                         }
                     });
                 } else { html = "<p style='color:white;'>No hay solicitudes activas en tu zona.</p>"; }

@@ -110,17 +110,26 @@
         function iniciarRastreoChofer(uid) {
             if (navigator.geolocation) {
                 navigator.geolocation.watchPosition(position => {
-                    choferLatActual = position.coords.latitude; choferLonActual = position.coords.longitude;
+                    choferLatActual = position.coords.latitude; 
+                    choferLonActual = position.coords.longitude;
                     db.ref(`choferes_turismo/${uid}/ubicacionEnVivo`).set({ lat: choferLatActual, lon: choferLonActual, ultimaActualizacion: new Date().toLocaleTimeString() });
                     document.getElementById('info-gps-chofer').innerText = `🛰️ GPS Activo (Tu base de partida en vivo)`;
-                }, error => { document.getElementById('info-gps-chofer').innerText = "⚠️ GPS inactivo (Permiso denegado)"; }, { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 });
+                }, error => { 
+                    document.getElementById('info-gps-chofer').innerText = "⚠️ GPS inactivo (Usando ciudad base)"; 
+                }, { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 });
             }
         }
 
         function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
-            let R = 6371; let dLat = (lat2 - lat1) * Math.PI / 180; let dLon = (lon2 - lon1) * Math.PI / 180;
-            let a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-            return (R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)))).toFixed(1);
+            try {
+                let R = 6371; 
+                let dLat = (lat2 - lat1) * Math.PI / 180; 
+                let dLon = (lon2 - lon1) * Math.PI / 180;
+                let a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+                return (R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)))).toFixed(1);
+            } catch(e) {
+                return "0.0";
+            }
         }
 
         auth.onAuthStateChanged(user => {
@@ -128,7 +137,8 @@
                 db.ref(`choferes_turismo/${user.uid}`).once('value').then(snap => {
                     choferPerfilData = snap.exists() ? snap.val() : { nombre: "Conductor", vehiculo: "Vehículo", telefono: "0981" };
                     document.getElementById('panel-nombre-chofer').innerText = "Panel: " + (choferPerfilData.nombre || "Chofer");
-                    iniciarRastreoChofer(user.uid); cargarViajesPendientesChofer(user.uid);
+                    iniciarRastreoChofer(user.uid); 
+                    cargarViajesPendientesChofer(user.uid);
                 });
             } else { window.location.href = 'login.html'; }
         });
@@ -199,7 +209,11 @@
                 let html = '';
                 if(snapshot.exists()){
                     let listaViajes = [];
-                    snapshot.forEach(child => listaViajes.push({ id: child.key, ...child.val() }));
+                    snapshot.forEach(child => {
+                        listaViajes.push({ id: child.key, ...child.val() });
+                    });
+                    
+                    // Ordenar por más recientes primero
                     listaViajes.reverse();
 
                     listaViajes.forEach(v => {
@@ -219,10 +233,11 @@
                             let puntoB = (v.lat && v.lon) ? `${v.lat},${v.lon}` : `${origenLimpio}, Paraguay`;
                             let puntoC = `${destinoLimpio}, Paraguay`;
 
-                            if (choferLatActual && v.lat) {
-                                distanciaTexto = `📍 Aprox. <strong>${calcularDistanciaKm(choferLatActual, choferLonActual, v.lat, v.lon)} km</strong> de distancia al pasajero`;
+                            if (choferLatActual && choferLonActual && v.lat && v.lon) {
+                                let kmCalculados = calcularDistanciaKm(choferLatActual, choferLonActual, v.lat, v.lon);
+                                distanciaTexto = `📍 Aprox. <strong>${kmCalculados} km</strong> de distancia`;
                             } else {
-                                distanciaTexto = `📍 Esperando ubicación GPS del pasajero...`;
+                                distanciaTexto = `📍 Ruta de larga distancia disponible`;
                             }
 
                             let linkGmaps = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(puntoA)}&destination=${encodeURIComponent(puntoC)}&waypoints=${encodeURIComponent(puntoB)}`;
@@ -286,10 +301,12 @@
                                 ${botonesAcciones}
                             </div>`;
                         } catch (error) {
-                            console.error("Error al renderizar el viaje ID:", v.id, error);
+                            console.error("Viaje omitido por datos corruptos:", error);
                         }
                     });
-                } else { html = "<p style='color:white;'>No hay solicitudes activas en tu zona.</p>"; }
+                } else { 
+                    html = "<p style='color:white;'>No hay solicitudes activas en tu zona.</p>"; 
+                }
                 document.getElementById('contenedor-viajes-chofer').innerHTML = html;
             });
         }

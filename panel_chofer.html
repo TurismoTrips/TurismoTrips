@@ -16,7 +16,9 @@
         .btn-volver { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.85rem; font-weight: 600; text-decoration: underline; }
         .btn-volver:hover { color: white; }
 
-        .viaje-card { background: #020617; border: 1px solid var(--border); padding: 18px; border-radius: 10px; margin-bottom: 20px; }
+        .viaje-card { background: #020617; border: 1px solid var(--border); padding: 18px; border-radius: 10px; margin-bottom: 20px; transition: 0.3s;}
+        .viaje-card.asignado { border: 2px solid var(--success); background: rgba(16, 185, 129, 0.05); } /* Borde verde si el viaje es tuyo */
+        
         .viaje-card h4 { margin: 0 0 10px 0; color: white; font-size: 1.1rem; }
         .viaje-card p { margin: 6px 0; font-size: 0.85rem; color: var(--text-muted); }
         .badge-estado { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; background: rgba(16,185,129,0.2); color: var(--success); }
@@ -122,8 +124,8 @@
         auth.onAuthStateChanged(user => {
             if(user) {
                 db.ref(`choferes_turismo/${user.uid}`).once('value').then(snap => {
-                    choferPerfilData = snap.exists() ? snap.val() : { nombre: "Conductor", vehiculo: "Vehículo Registrado", telefono: "0981000000" };
-                    document.getElementById('panel-nombre-chofer').innerText = "Panel: " + choferPerfilData.nombre;
+                    choferPerfilData = snap.exists() ? snap.val() : { nombre: "Conductor", vehiculo: "Vehículo", telefono: "0981" };
+                    document.getElementById('panel-nombre-chofer').innerText = "Panel: " + (choferPerfilData.nombre || "Chofer");
                     iniciarRastreoChofer(user.uid); cargarViajesPendientesChofer(user.uid);
                 });
             } else { window.location.href = 'login.html'; }
@@ -145,9 +147,35 @@
             let precioInp = document.getElementById(`precio-${viajeId}`).value.trim();
             if(!precioInp || isNaN(precioInp)) return mostrarNotificacion("Ingrese una tarifa válida.");
             db.ref(`viajes_turismo/pendientes/${viajeId}/ofertas/${auth.currentUser.uid}`).set({
-                choferNombre: choferPerfilData.nombre, choferVehiculo: choferPerfilData.vehiculo,
-                choferTelefono: choferPerfilData.telefono, precio: parseInt(precioInp).toLocaleString('es-PY') + " Gs."
+                choferNombre: choferPerfilData.nombre || "Chofer", 
+                choferVehiculo: choferPerfilData.vehiculo || "Vehículo",
+                choferTelefono: choferPerfilData.telefono || "", 
+                precio: parseInt(precioInp).toLocaleString('es-PY') + " Gs."
             }).then(() => mostrarNotificacion("¡Tarifa guardada correctamente!"));
+        }
+
+        // SISTEMA DE GESTIÓN DE ESTADOS DEL VIAJE
+        window.descartarViaje = function(viajeId) {
+            if(confirm("¿Seguro que deseas ocultar este viaje de tu lista? (No se borrará para los demás choferes)")) {
+                db.ref(`viajes_turismo/pendientes/${viajeId}/descartados/${auth.currentUser.uid}`).set(true);
+            }
+        }
+
+        window.confirmarAcuerdo = function(viajeId) {
+            if(confirm("¿Cerraste el trato con el pasajero? El viaje se te asignará y desaparecerá para los demás choferes.")) {
+                db.ref(`viajes_turismo/pendientes/${viajeId}`).update({
+                    estado: 'Acuerdo Cerrado',
+                    choferAsignadoUid: auth.currentUser.uid
+                });
+                mostrarNotificacion("¡Felicidades! Viaje asegurado y asignado a ti.");
+            }
+        }
+
+        window.finalizarViaje = function(viajeId) {
+            if(confirm("¿Completaste el viaje con éxito? Esto lo eliminará del sistema.")) {
+                db.ref(`viajes_turismo/pendientes/${viajeId}`).remove();
+                mostrarNotificacion("Viaje finalizado y archivado.");
+            }
         }
 
         function cargarViajesPendientesChofer(choferUid) {
@@ -159,55 +187,99 @@
                     listaViajes.reverse();
 
                     listaViajes.forEach(v => {
-                        let distanciaTexto = "Calculando distancia...";
-                        
-                        let ciudadChofer = choferPerfilData.ciudadBase ? choferPerfilData.ciudadBase.split(' (')[0] : "";
-                        let origenLimpio = (v.origen || "").split(' (')[0];
-                        let destinoLimpio = (v.destino || "").split(' (')[0];
+                        try {
+                            // 1. Si el chofer descartó este viaje, lo saltamos y no lo dibujamos.
+                            if (v.descartados && v.descartados[choferUid]) return;
 
-                        let puntoA = (choferLatActual && choferLonActual) ? `${choferLatActual},${choferLonActual}` : `${ciudadChofer}, Paraguay`;
-                        let puntoB = (v.lat && v.lon && v.lat !== -25.28) ? `${v.lat},${v.lon}` : `${origenLimpio}, Paraguay`;
-                        let puntoC = `${destinoLimpio}, Paraguay`;
+                            // 2. Si el viaje fue tomado por OTRO chofer distinto a ti, no lo mostramos.
+                            if (v.choferAsignadoUid && v.choferAsignadoUid !== choferUid) return;
 
-                        if (choferLatActual && v.lat && v.lat !== -25.28) {
-                            distanciaTexto = `📍 Aprox. <strong>${calcularDistanciaKm(choferLatActual, choferLonActual, v.lat, v.lon)} km</strong> de distancia`;
-                        } else {
-                            distanciaTexto = `📍 Esperando ubicación GPS del pasajero...`;
-                        }
-
-                        let linkGmaps = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(puntoA)}&destination=${encodeURIComponent(puntoC)}&waypoints=${encodeURIComponent(puntoB)}`;
-                        
-                        let miOferta = (v.ofertas && v.ofertas[choferUid]) ? v.ofertas[choferUid] : null;
-                        let fechaLegible = formatearFechaBonita(v.fecha);
-
-                        let textoWpp = miOferta 
-                            ? `Hola ${v.cliente || 'Pasajero'}, vi tu solicitud en *TurismoTrips* para viajar el ${fechaLegible} a ${v.destino}. Mi propuesta es de *${miOferta.precio}* con vehículo ${choferPerfilData.vehiculo} (${choferPerfilData.nombre}). ¿Coordinamos? \n\n📍 Guardá nuestra plataforma para futuros viajes: ${linkPlataforma}`
-                            : `Hola ${v.cliente || 'Pasajero'}, vi tu solicitud en *TurismoTrips* para viajar el ${fechaLegible} a ${v.destino}. Con vehículo ${choferPerfilData.vehiculo} (${choferPerfilData.nombre}). ¿Conversamos sobre el traslado? \n\n📍 Guardá nuestra plataforma para futuros viajes: ${linkPlataforma}`;
-                        
-                        let linkWppDirecto = `https://wa.me/595${(v.telefono||'').replace(/^0+/, '')}?text=${encodeURIComponent(textoWpp)}`;
-
-                        html += `
-                        <div class="viaje-card">
-                            <h4>Ruta: ${v.origen} ➔ ${v.destino}</h4>
-                            <p>📅 Fecha: <strong>${fechaLegible}</strong> | 👥 Pasajeros: <strong>${v.pasajeros}</strong></p>
-                            <p>👤 Pasajero: <strong>${v.cliente}</strong> <span class="badge-estado">${v.estado || 'Pendiente'}</span></p>
-                            <p style="color:var(--primary); font-size:0.85rem; margin-top:4px;">${distanciaTexto}</p>
+                            let esMio = (v.choferAsignadoUid === choferUid);
+                            let claseCard = esMio ? 'viaje-card asignado' : 'viaje-card';
                             
-                            <div style="background:#020617; border:1px dashed var(--border); padding:12px; border-radius:8px; margin-top:12px;">
-                                <label style="font-size:0.8rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:6px;">TU PROPUESTA DE TARIFA (Gs.):</label>
-                                <div style="display:flex; gap:10px;">
-                                    <input type="number" id="precio-${v.id}" placeholder="Ej: 250000" value="${miOferta ? miOferta.precio.replace(/[^0-9]/g, '') : ''}" style="padding:10px; width:100%; border-radius:8px; border:1px solid var(--border); background:#0f172a; color:white; outline:none;">
-                                    <button class="btn-opcion" style="white-space:nowrap;" onclick="enviarOfertaPrecio('${v.id}')">Actualizar</button>
-                                </div>
-                            </div>
+                            let distanciaTexto = "Calculando distancia...";
+                            let ciudadChofer = (choferPerfilData.ciudadBase || "Paraguay").split(' (')[0];
+                            let origenLimpio = (v.origen || "Paraguay").split(' (')[0];
+                            let destinoLimpio = (v.destino || "Paraguay").split(' (')[0];
 
-                            <div class="grid-2" style="margin-top:12px;">
-                                <button class="btn-secundario" onclick="window.open('${linkGmaps}', '_blank')">Ruta: A ➔ B ➔ C</button>
-                                <button class="btn-opcion" style="background:#16a34a;" onclick="window.open('${linkWppDirecto}', '_blank')">WhatsApp Pasajero</button>
-                            </div>
-                        </div>`;
+                            let puntoA = (choferLatActual && choferLonActual) ? `${choferLatActual},${choferLonActual}` : `${ciudadChofer}, Paraguay`;
+                            let puntoB = (v.lat && v.lon) ? `${v.lat},${v.lon}` : `${origenLimpio}, Paraguay`;
+                            let puntoC = `${destinoLimpio}, Paraguay`;
+
+                            if (choferLatActual && v.lat) {
+                                distanciaTexto = `📍 Aprox. <strong>${calcularDistanciaKm(choferLatActual, choferLonActual, v.lat, v.lon)} km</strong> de distancia al pasajero`;
+                            } else {
+                                distanciaTexto = `📍 Esperando ubicación GPS del pasajero...`;
+                            }
+
+                            let linkGmaps = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(puntoA)}&destination=${encodeURIComponent(puntoC)}&waypoints=${encodeURIComponent(puntoB)}`;
+                            
+                            let miOferta = (v.ofertas && v.ofertas[choferUid]) ? v.ofertas[choferUid] : null;
+                            let fechaLegible = formatearFechaBonita(v.fecha);
+
+                            let vCliente = v.cliente || 'Pasajero';
+                            let vDestino = v.destino || 'Destino';
+                            let vVehiculo = choferPerfilData.vehiculo || 'Vehículo';
+                            let vNombreChofer = choferPerfilData.nombre || 'Chofer';
+                            let vTelefonoStr = (v.telefono || '').replace(/^0+/, '');
+
+                            let textoWpp = miOferta 
+                                ? `Hola ${vCliente}, vi tu solicitud en *TurismoTrips* para viajar el ${fechaLegible} a ${vDestino}. Mi propuesta es de *${miOferta.precio}* con vehículo ${vVehiculo} (${vNombreChofer}). ¿Coordinamos? \n\n📍 Guardá nuestra plataforma para futuros viajes: ${linkPlataforma}`
+                                : `Hola ${vCliente}, vi tu solicitud en *TurismoTrips* para viajar el ${fechaLegible} a ${vDestino}. Con vehículo ${vVehiculo} (${vNombreChofer}). ¿Conversamos sobre el traslado? \n\n📍 Guardá nuestra plataforma para futuros viajes: ${linkPlataforma}`;
+                            
+                            let linkWppDirecto = `https://wa.me/595${vTelefonoStr}?text=${encodeURIComponent(textoWpp)}`;
+                            let alertaClima = (v.clima && v.clima.includes("Tormenta")) ? `background: rgba(239, 68, 68, 0.2); color: var(--danger);` : ``;
+
+                            // Construcción de botones dinámica
+                            let botonesAcciones = "";
+
+                            if (esMio) {
+                                // Si es tu viaje asignado, muestras el botón para finalizarlo.
+                                botonesAcciones = `
+                                    <div class="grid-2" style="margin-top:12px;">
+                                        <button class="btn-secundario" onclick="window.open('${linkGmaps}', '_blank')">Navegar GPS</button>
+                                        <button class="btn-opcion" style="background:#16a34a;" onclick="window.open('${linkWppDirecto}', '_blank')">WhatsApp Pasajero</button>
+                                    </div>
+                                    <button class="btn-opcion" style="background:var(--primary); margin-top:10px; width:100%;" onclick="finalizarViaje('${v.id}')">🏁 Marcar Viaje como Finalizado</button>
+                                `;
+                            } else {
+                                // Si el viaje está libre, muestras el cotizador y los botones de Descartar / Confirmar
+                                botonesAcciones = `
+                                    <div style="background:#020617; border:1px dashed var(--border); padding:12px; border-radius:8px; margin-top:12px;">
+                                        <label style="font-size:0.8rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:6px;">TU PROPUESTA DE TARIFA (Gs.):</label>
+                                        <div style="display:flex; gap:10px;">
+                                            <input type="number" id="precio-${v.id}" placeholder="Ej: 250000" value="${miOferta ? miOferta.precio.replace(/[^0-9]/g, '') : ''}" style="padding:10px; width:100%; border-radius:8px; border:1px solid var(--border); background:#0f172a; color:white; outline:none;">
+                                            <button class="btn-opcion" style="white-space:nowrap;" onclick="enviarOfertaPrecio('${v.id}')">Actualizar</button>
+                                        </div>
+                                    </div>
+                                    <div class="grid-2" style="margin-top:12px;">
+                                        <button class="btn-secundario" onclick="window.open('${linkGmaps}', '_blank')">Ruta: A ➔ B ➔ C</button>
+                                        <button class="btn-opcion" style="background:#16a34a;" onclick="window.open('${linkWppDirecto}', '_blank')">WhatsApp Pasajero</button>
+                                    </div>
+                                    <div class="grid-2" style="margin-top:10px;">
+                                        <button class="btn-secundario" style="color:var(--danger); border-color:var(--danger);" onclick="descartarViaje('${v.id}')">🚫 Descartar</button>
+                                        <button class="btn-opcion" style="background:var(--primary);" onclick="confirmarAcuerdo('${v.id}')">🤝 Confirmar Acuerdo</button>
+                                    </div>
+                                `;
+                            }
+
+                            html += `
+                            <div class="${claseCard}">
+                                <h4>Ruta: ${v.origen || 'N/A'} ➔ ${vDestino}</h4>
+                                <p>📅 Fecha: <strong>${fechaLegible}</strong> | 👥 Pasajeros: <strong>${v.pasajeros || 1}</strong></p>
+                                <p>👤 Pasajero: <strong>${vCliente}</strong> 
+                                   ${esMio ? `<span class="badge-estado" style="background:var(--success); color:white;">Acordado Contigo</span>` : `<span class="badge-estado">${v.estado || 'Pendiente'}</span>`}
+                                </p>
+                                <p style="color:var(--primary); font-size:0.85rem; margin-top:4px;">${distanciaTexto}</p>
+                                <p style="margin-top:6px;"><span class="badge-clima" style="${alertaClima}">Clima: ${v.clima || 'Normal'}</span></p>
+                                
+                                ${botonesAcciones}
+                            </div>`;
+                        } catch (error) {
+                            console.log("Se ignoró un viaje corrupto antiguo.");
+                        }
                     });
-                } else { html = "<p style='color:white;'>No hay solicitudes activas.</p>"; }
+                } else { html = "<p style='color:white;'>No hay solicitudes activas en tu zona.</p>"; }
                 document.getElementById('contenedor-viajes-chofer').innerHTML = html;
             });
         }

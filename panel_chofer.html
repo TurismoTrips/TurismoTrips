@@ -135,7 +135,7 @@
         auth.onAuthStateChanged(user => {
             if(user) {
                 db.ref(`choferes_turismo/${user.uid}`).once('value').then(snap => {
-                    choferPerfilData = snap.exists() ? snap.val() : { nombre: "Conductor", vehiculo: "Vehículo", telefono: "0981" };
+                    choferPerfilData = snap.exists() ? snap.val() : { nombre: "Conductor", vehiculo: "Vehículo", telefono: "0981", ciudadBase: "Asunción (Central)" };
                     document.getElementById('panel-nombre-chofer').innerText = "Panel: " + (choferPerfilData.nombre || "Chofer");
                     iniciarRastreoChofer(user.uid); 
                     cargarViajesPendientesChofer(user.uid);
@@ -213,7 +213,6 @@
                         listaViajes.push({ id: child.key, ...child.val() });
                     });
                     
-                    // Ordenar por más recientes primero
                     listaViajes.reverse();
 
                     listaViajes.forEach(v => {
@@ -225,11 +224,13 @@
                             let claseCard = esMio ? 'viaje-card asignado' : 'viaje-card';
                             
                             let distanciaTexto = "Calculando distancia...";
-                            let ciudadChofer = (choferPerfilData.ciudadBase || "Paraguay").split(' (')[0];
+                            
+                            // CIUDAD BASE SEGURA (Evita que falle con "Paraguay")
+                            let ciudadBaseChofer = choferPerfilData && choferPerfilData.ciudadBase ? choferPerfilData.ciudadBase.split(' (')[0] : "Asunción";
                             let origenLimpio = (v.origen || "Paraguay").split(' (')[0];
                             let destinoLimpio = (v.destino || "Paraguay").split(' (')[0];
 
-                            let puntoA = (choferLatActual && choferLonActual) ? `${choferLatActual},${choferLonActual}` : `${ciudadChofer}, Paraguay`;
+                            let puntoA = (choferLatActual && choferLonActual) ? `${choferLatActual},${choferLonActual}` : `${ciudadBaseChofer}, Paraguay`;
                             let puntoB = (v.lat && v.lon) ? `${v.lat},${v.lon}` : `${origenLimpio}, Paraguay`;
                             let puntoC = `${destinoLimpio}, Paraguay`;
 
@@ -244,6 +245,9 @@
                             
                             let miOferta = (v.ofertas && v.ofertas[choferUid]) ? v.ofertas[choferUid] : null;
                             let fechaLegible = formatearFechaBonita(v.fecha);
+
+                            // HORA Y FECHA DE CREACIÓN DE LA SOLICITUD
+                            let fechaCreacionTexto = v.timestamp ? new Date(v.timestamp).toLocaleString('es-PY', { dateStyle: 'short', timeStyle: 'short' }) : "Fecha reciente";
 
                             let vCliente = v.cliente || 'Pasajero';
                             let vDestino = v.destino || 'Destino';
@@ -291,7 +295,8 @@
                             html += `
                             <div class="${claseCard}">
                                 <h4>Ruta: ${v.origen || 'N/A'} ➔ ${vDestino}</h4>
-                                <p>📅 Fecha: <strong>${fechaLegible}</strong> | 👥 Pasajeros: <strong>${v.pasajeros || 1}</strong></p>
+                                <p>🕒 Solicitud creada: <strong>${fechaCreacionTexto}</strong></p>
+                                <p>📅 Fecha del viaje: <strong>${fechaLegible}</strong> | 👥 Pasajeros: <strong>${v.pasajeros || 1}</strong></p>
                                 <p>👤 Pasajero: <strong>${vCliente}</strong> 
                                    ${esMio ? `<span class="badge-estado" style="background:var(--success); color:white;">Acordado Contigo</span>` : `<span class="badge-estado">${v.estado || 'Pendiente'}</span>`}
                                 </p>
@@ -301,7 +306,7 @@
                                 ${botonesAcciones}
                             </div>`;
                         } catch (error) {
-                            console.error("Viaje omitido por datos corruptos:", error);
+                            console.error("Error al renderizar el viaje:", error);
                         }
                     });
                 } else { 

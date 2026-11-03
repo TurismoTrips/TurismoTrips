@@ -278,7 +278,6 @@
             inicializarSelectorFecha(); actCiuOrigen(); actCiuDestino();
         }
 
-        // NUEVO SISTEMA DE CLIMA REAL (API Open-Meteo)
         async function consultarClimaReal() {
             let ciudad = document.getElementById('dest-ciudad').value;
             let fecha = document.getElementById('inp-fecha-final').value;
@@ -292,20 +291,18 @@
             w.innerHTML = "⏳ Consultando pronóstico meteorológico...";
             
             try {
-                // 1. Obtener coordenadas de la ciudad de destino
                 let geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(ciudad)}&count=1&language=es&format=json`);
                 let geoData = await geoRes.json();
                 
                 if(!geoData.results || geoData.results.length === 0) {
                     climaGlobalGuardado = "Condiciones Normales";
-                    w.innerHTML = "🌤️ Clima: Condiciones Normales (Ciudad no mapeada)";
+                    w.innerHTML = "🌤️ Clima: Condiciones Normales";
                     return;
                 }
                 
                 let lat = geoData.results[0].latitude;
                 let lon = geoData.results[0].longitude;
                 
-                // 2. Obtener pronóstico exacto para esa fecha
                 let climaRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=America%2FAsuncion&start_date=${fecha}&end_date=${fecha}`);
                 let climaData = await climaRes.json();
                 
@@ -328,7 +325,7 @@
                     w.style.borderColor = col;
                     w.innerHTML = `Pronóstico para ${ciudad}:<br><span style="font-size:1.1rem; margin-top:5px; display:inline-block;">${climaGlobalGuardado}</span>`;
                 } else {
-                    climaGlobalGuardado = "Condiciones Normales (Pronóstico aún no disponible)";
+                    climaGlobalGuardado = "Condiciones Normales";
                     w.innerHTML = "📅 " + climaGlobalGuardado;
                 }
             } catch(e) {
@@ -349,7 +346,8 @@
                 clima: climaGlobalGuardado,
                 estado: "Esperando Propuestas",
                 lat: pasajeroLat || null,
-                lon: pasajeroLon || null
+                lon: pasajeroLon || null,
+                timestamp: Date.now()
             };
 
             if(!data.cliente || !data.telefono || !document.getElementById('dest-lugar').value.trim()) { 

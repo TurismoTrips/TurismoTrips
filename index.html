@@ -20,6 +20,9 @@
         .btn-opcion.principal { background: var(--primary); color: white; border: none; }
         .btn-secundario { background: transparent; color: var(--primary); border: 1px solid var(--primary); font-weight: 600; padding: 14px; border-radius: 8px; width: 100%; cursor: pointer; display: block; box-sizing: border-box; margin-top: 10px;}
         .btn-secundario:hover { background: rgba(2, 132, 199, 0.1); }
+        
+        .btn-viral { background: transparent; border: 1px dashed var(--primary); color: var(--primary); padding: 12px; border-radius: 8px; font-size: 0.9rem; font-weight: bold; cursor: pointer; margin-bottom: 20px; width: 100%; transition: 0.3s; }
+        .btn-viral:hover { background: rgba(2, 132, 199, 0.1); color: white; border-color: white; }
 
         .form-group { margin-bottom: 16px; text-align: left; }
         .form-group label { display: block; margin-bottom: 8px; font-size: 0.85rem; color: var(--text-muted); font-weight: 600;}
@@ -49,8 +52,13 @@
         <!-- MENÚ PRINCIPAL -->
         <div class="card" id="menu-principal">
             <h1>Turismo<span>Trips</span></h1>
-            <p>Plataforma de Transporte y Larga Distancia Paraguay</p>
+            <p style="margin-bottom: 15px;">Plataforma de Transporte y Larga Distancia Paraguay</p>
+            
+            <!-- BOTÓN VIRAL DE COMPARTIR -->
+            <button class="btn-viral" onclick="compartirPlataforma()">📲 Compartir plataforma con amigos</button>
+
             <button class="btn-opcion principal" onclick="iniciarSolicitudViaje()">Programar un Viaje / Ruta</button>
+            
             <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border);">
                 <p style="font-size: 0.85rem; margin-bottom: 15px;">¿Ya está registrado en la red?</p>
                 <button class="btn-secundario" onclick="window.location.href='login.html'">Acceder al Panel de Chofer</button>
@@ -135,6 +143,21 @@
             let toast = document.getElementById('toast-notification');
             toast.innerText = mensaje; toast.classList.add('activa');
             setTimeout(() => { toast.classList.remove('activa'); }, 4000);
+        }
+
+        // FUNCIÓN VIRAL DE COMPARTIR
+        function compartirPlataforma() {
+            const linkPlataforma = "https://turismotrips.github.io";
+            if (navigator.share) {
+                navigator.share({
+                    title: 'TurismoTrips Paraguay',
+                    text: '¡Descubrí TurismoTrips! La nueva red de viajes de larga distancia e interurbanos. Pedí tu viaje acá 👇',
+                    url: linkPlataforma
+                }).catch(console.error);
+            } else {
+                navigator.clipboard.writeText(linkPlataforma);
+                mostrarNotificacion("¡Enlace copiado! Pegalo en tus grupos de WhatsApp.");
+            }
         }
 
         const deptosPy = {
@@ -276,7 +299,7 @@
                 telefono: document.getElementById('inp-telefono').value.trim(),
                 clima: climaGlobalGuardado,
                 estado: "Esperando Propuestas",
-                lat: pasajeroLat || -25.28,  // Coordenada exacta GPS del Pasajero
+                lat: pasajeroLat || -25.28,
                 lon: pasajeroLon || -57.63
             };
 

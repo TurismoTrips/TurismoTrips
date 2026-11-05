@@ -20,7 +20,6 @@
         .btn-primary { background: var(--primary); color: white; }
         .btn-success { background: var(--success); color: white; }
         .btn-outline { background: transparent; color: var(--text-main); border: 1px solid var(--border); }
-        .btn-primary:active { transform: scale(0.98); }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         
         .caja-tarifa { background: var(--bg-base); padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-top: 15px; }
@@ -38,22 +37,28 @@
         .file-upload-wrapper input[type="file"] { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
         .file-upload-text { color: var(--primary); font-weight: bold; font-size: 0.85rem; pointer-events: none;}
 
+        /* DISEÑO FLYER INTELIGENTE SIN FOTO FORZADA */
         .flayer-container { width: 100%; max-width: 350px; margin: 0 auto; border-radius: 16px; overflow: hidden; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); box-shadow: 0 15px 35px rgba(0,0,0,0.5); position: relative; border: 1px solid #334155; }
         .flayer-header { background: var(--primary); color: white; padding: 15px; text-align: center; font-size: 1.2rem; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
         
-        .flayer-imagen-coche { width: 100%; height: 200px; background-color: #000; position: relative; overflow: hidden; }
-        .flayer-imagen-coche img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
-        .flayer-imagen-coche .gradiente { position: absolute; bottom: 0; left: 0; width: 100%; height: 80px; background: linear-gradient(to top, #0f172a, transparent); }
+        .flayer-imagen-coche { width: 100%; height: 170px; background-color: #0b0f19; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .flayer-imagen-coche img { width: 100%; height: 100%; object-fit: cover; }
         
-        .flayer-datos { padding: 0 20px; text-align: center; position: relative; top: -20px; }
+        /* BANNER DINÁMICO CUANDO NO HAY FOTO (Evita autos equivocados) */
+        .flayer-sin-foto { width: 100%; height: 100%; background: linear-gradient(135deg, #0284c7, #0f172a); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 15px; }
+        .flayer-sin-foto span { font-size: 2.5rem; margin-bottom: 5px; }
+        .flayer-sin-foto p { color: white; font-weight: bold; font-size: 1.1rem; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+
+        .flayer-datos { padding: 0 20px; text-align: center; position: relative; top: -15px; }
         .flayer-nombre { font-size: 1.4rem; color: white; font-weight: bold; margin: 0 0 5px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.8);}
-        .flayer-vehiculo { color: var(--primary); font-size: 1rem; font-weight: bold; margin-bottom: 15px; }
+        .flayer-vehiculo { color: var(--primary); font-size: 1.1rem; font-weight: bold; margin-bottom: 5px; background: rgba(14, 165, 233, 0.15); padding: 6px; border-radius: 6px; border: 1px solid rgba(14, 165, 233, 0.3); }
+        .flayer-chapa-badge { display: inline-block; background: #334155; color: #f8fafc; font-size: 0.8rem; font-weight: bold; padding: 3px 10px; border-radius: 4px; margin-bottom: 15px; letter-spacing: 1px;}
         
-        .flayer-qr-box { background: white; padding: 10px; border-radius: 12px; width: 140px; margin: 0 auto; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .flayer-qr-box { background: white; padding: 8px; border-radius: 12px; width: 130px; margin: 0 auto; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         .flayer-qr-box img { width: 100%; height: auto; display: block; }
         
-        .flayer-footer { text-align: center; padding: 20px; }
-        .flayer-cta { display: inline-block; background: var(--success); color: white; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; letter-spacing: 0.5px; margin-bottom: 8px;}
+        .flayer-footer { text-align: center; padding: 15px 20px 20px 20px; }
+        .flayer-cta { display: inline-block; background: var(--success); color: white; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; letter-spacing: 0.5px; margin-bottom: 6px;}
         .flayer-zona { color: var(--text-muted); font-size: 0.75rem; font-weight: 600; text-transform: uppercase;}
 
         #toast-notification { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%) translateY(100px); background: #334155; color: white; border: 1px solid #475569; padding: 14px 24px; border-radius: 30px; font-weight: 600; font-size: 0.95rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); opacity: 0; transition: all 0.3s ease-in-out; z-index: 2000; text-align: center; width: 90%; max-width: 400px; pointer-events: none;}
@@ -71,15 +76,15 @@
             
             <div class="form-group"><label>Nombre Completo</label><input type="text" id="edit-nombre"></div>
             <div class="form-group"><label>WhatsApp de Contacto</label><input type="tel" id="edit-tel"></div>
-            <div class="form-group"><label>Modelo y Año del Vehículo</label><input type="text" id="edit-vehiculo" placeholder="Ej: Toyota Vitz 2012"></div>
+            <div class="form-group"><label>Modelo y Año del Vehículo</label><input type="text" id="edit-vehiculo" placeholder="Ej: Toyota Auris 2020"></div>
             
             <div class="grid-2">
-                <div class="form-group"><label>Color del Auto</label><input type="text" id="edit-color" placeholder="Ej: Plata / Rojo"></div>
-                <div class="form-group"><label>Número de Chapa</label><input type="text" id="edit-chapa" placeholder="Ej: AA123BB"></div>
+                <div class="form-group"><label>Color del Auto</label><input type="text" id="edit-color" placeholder="Ej: Gris"></div>
+                <div class="form-group"><label>Número de Chapa</label><input type="text" id="edit-chapa" placeholder="Ej: AAA1234"></div>
             </div>
 
             <div class="form-group">
-                <label>Actualizar Foto (Fundamental para tu publicidad)</label>
+                <label>Foto del Auto (Opcional - Si no subes, se usará diseño oficial)</label>
                 <div class="file-upload-wrapper">
                     <span class="file-upload-text" id="edit-foto-texto">📸 Tocar para elegir de la Galería</span>
                     <input type="file" id="edit-foto-archivo" accept="image/*" onchange="mostrarNombreArchivoEdit('edit-foto-archivo', 'edit-foto-texto')">
@@ -112,14 +117,19 @@
             <div id="flyer-exportable" class="flayer-container">
                 <div class="flayer-header">TurismoTrips Oficial</div>
                 
-                <div class="flayer-imagen-coche">
-                    <img id="promo-foto-img" src="" alt="Coche" crossorigin="anonymous">
-                    <div class="gradiente"></div>
+                <div class="flayer-imagen-coche" id="contenedor-foto-flyer">
+                    <!-- Si hay foto la muestra, sino muestra banner elegante con datos -->
+                    <img id="promo-foto-img" src="" alt="Coche" crossorigin="anonymous" style="display:none;">
+                    <div id="promo-sin-foto-box" class="flayer-sin-foto">
+                        <span>🚗</span>
+                        <p id="flyer-marca-agua">SERVICIO EXCLUSIVO</p>
+                    </div>
                 </div>
                 
                 <div class="flayer-datos">
                     <h2 class="flayer-nombre" id="promo-nombre">Conductor</h2>
-                    <div class="flayer-vehiculo" id="promo-auto">Vehículo y Color</div>
+                    <div class="flayer-vehiculo" id="promo-auto">Vehículo</div>
+                    <div><span class="flayer-chapa-badge" id="promo-chapa">CHAPA: N/A</span></div>
                     
                     <div class="flayer-qr-box">
                         <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://turismotrips.github.io/TurismoTrips/&margin=1" alt="QR" crossorigin="anonymous">
@@ -214,6 +224,33 @@
             if(file) document.getElementById(textoId).innerText = "✅ " + file.name;
         }
 
+        // FUNCIÓN PARA COMPRIMIR FOTO Y EVITAR QUE SE CONGELE EL GUARDADO
+        function comprimirImagen(file, maxWidth, maxHeight, quality) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = event => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > height) {
+                            if (width > maxWidth) { height *= maxWidth / width; width = maxWidth; }
+                        } else {
+                            if (height > maxHeight) { width *= maxHeight / height; height = maxHeight; }
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width; canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        canvas.toBlob(blob => { resolve(blob); }, 'image/jpeg', quality);
+                    };
+                    img.error = err => reject(err);
+                };
+            });
+        }
+
         window.guardarPerfil = async function() {
             const user = auth.currentUser;
             if(!user) return;
@@ -227,8 +264,12 @@
                 const archivoNuevo = document.getElementById('edit-foto-archivo').files[0];
                 
                 if (archivoNuevo) {
-                    const storageRef = storage.ref(`autos_choferes/${user.uid}_${archivoNuevo.name}`);
-                    const snapshot = await storageRef.put(archivoNuevo);
+                    btn.innerText = "Comprimiendo foto... ⏳";
+                    const blobComprimido = await comprimirImagen(archivoNuevo, 800, 800, 0.7);
+                    
+                    btn.innerText = "Subiendo foto... ⏳";
+                    const storageRef = storage.ref(`autos_choferes/${user.uid}_foto.jpg`);
+                    const snapshot = await storageRef.put(blobComprimido);
                     fotoUrlGuardada = await snapshot.ref.getDownloadURL();
                 }
 
@@ -242,6 +283,7 @@
                     ciudadBase: document.getElementById('edit-ciudad').value
                 };
 
+                btn.innerText = "Guardando datos... ⏳";
                 await db.ref(`choferes_turismo/${user.uid}`).update(datosActualizados);
                 choferPerfilData = { ...choferPerfilData, ...datosActualizados };
                 
@@ -262,10 +304,22 @@
             if(!choferPerfilData) return;
             document.getElementById('promo-nombre').innerText = choferPerfilData.nombre || "Conductor";
             document.getElementById('promo-auto').innerText = `${choferPerfilData.vehiculo || 'Vehículo'} • ${choferPerfilData.color || ''}`;
+            document.getElementById('promo-chapa').innerText = `CHAPA: ${choferPerfilData.chapa || 'N/A'}`;
             document.getElementById('promo-zona').innerText = "Base: " + (choferPerfilData.ciudadBase || "Paraguay");
 
             let imgElement = document.getElementById('promo-foto-img');
-            imgElement.src = choferPerfilData.fotoVehiculo || "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=500&q=80";
+            let sinFotoBox = document.getElementById('promo-sin-foto-box');
+            let marcaAgua = document.getElementById('flyer-marca-agua');
+
+            if(choferPerfilData.fotoVehiculo && choferPerfilData.fotoVehiculo.trim() !== "") {
+                imgElement.src = choferPerfilData.fotoVehiculo;
+                imgElement.style.display = "block";
+                sinFotoBox.style.display = "none";
+            } else {
+                imgElement.style.display = "none";
+                sinFotoBox.style.display = "flex";
+                marcaAgua.innerText = `${choferPerfilData.vehiculo || 'Vehículo'} (${choferPerfilData.color || ''})`;
+            }
         }
 
         auth.onAuthStateChanged(user => {
@@ -335,7 +389,7 @@
                                     <button class="btn btn-primary" style="width:100%;" onclick="enviarOfertaPrecio('${v.id}')">Enviar Propuesta</button>
                                 </div>
                                 <div class="grid-2" style="margin-top:10px;">
-                                    <button class="btn btn-outline" onclick="descartarViaje('${v.id}')">Ocultar</button>
+                                    <button class="btn btn-outline" onclick="descartarVue('${v.id}')" onclick="descartarViaje('${v.id}')">Ocultar</button>
                                     <button class="btn btn-outline" style="border-color:white;" onclick="confirmarAcuerdo('${v.id}')">Tomar Viaje</button>
                                 </div>` : `<button class="btn btn-primary" style="margin-top:15px; width:100%;" onclick="finalizarViaje('${v.id}')">Marcar Viaje como Finalizado</button>`;
 

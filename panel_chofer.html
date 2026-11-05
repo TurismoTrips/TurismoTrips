@@ -62,6 +62,14 @@
         
         .alerta-retorno { background: rgba(217, 70, 239, 0.1); color: #e879f9; padding: 10px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 0.9rem; margin-bottom: 15px; border: 1px dashed #d946ef;}
 
+        /* MODAL DEL CÓDIGO QR */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .modal-overlay.activo { opacity: 1; pointer-events: auto; }
+        .modal-content { background: var(--bg-card); padding: 25px; border-radius: 15px; text-align: center; border: 1px solid var(--border); width: 90%; max-width: 320px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        .modal-content h3 { margin: 0 0 10px 0; color: white; font-size: 1.3rem;}
+        .modal-content p { margin: 0 0 20px 0; font-size: 0.9rem; color: var(--text-muted); }
+        .img-qr { width: 220px; height: 220px; border-radius: 10px; border: 5px solid white; margin-bottom: 20px; background: white;}
+
         #toast-notification {
             position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%) translateY(100px);
             background: #334155; color: white; border: 1px solid #475569; padding: 14px 24px;
@@ -75,6 +83,20 @@
 
     <div id="toast-notification">Mensaje del sistema</div>
 
+    <!-- MODAL DEL QR VISUAL -->
+    <div id="modal-qr" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Tu Código QR</h3>
+            <p>Muestra esta pantalla al pasajero o sácale captura para imprimir tu sticker.</p>
+            
+            <!-- API Segura y Gratuita para generar el QR real -->
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://turismotrips.github.io/TurismoTrips/" alt="QR TurismoTrips" class="img-qr">
+            
+            <button class="btn btn-success" onclick="compartirLinkWeb()">📲 Compartir Link por Web</button>
+            <button class="btn btn-outline" style="margin-top: 10px;" onclick="cerrarModalQR()">Cerrar</button>
+        </div>
+    </div>
+
     <div class="container">
         
         <!-- ENCABEZADO LIMPIO -->
@@ -82,7 +104,7 @@
             <h2 id="panel-nombre-chofer">Mi Panel</h2>
             <div class="header-acciones">
                 <button class="btn btn-outline" style="font-size: 0.9rem; padding: 12px;" onclick="restaurarDescartados()">Actualizar</button>
-                <button class="btn btn-outline" style="font-size: 0.9rem; padding: 12px;" onclick="compartirApp()">Generar QR</button>
+                <button class="btn btn-outline" style="font-size: 0.9rem; padding: 12px;" onclick="abrirModalQR()">Ver Mi QR</button>
                 <button class="btn btn-outline" style="font-size: 0.9rem; padding: 12px; color:#f87171;" onclick="cerrarSesion()">Salir</button>
             </div>
         </div>
@@ -121,16 +143,23 @@
             setTimeout(() => { toast.classList.remove('activo'); }, 4000);
         }
 
-        window.compartirApp = function() {
+        /* FUNCIONES DEL MODAL QR */
+        window.abrirModalQR = function() {
+            document.getElementById('modal-qr').classList.add('activo');
+        }
+        window.cerrarModalQR = function() {
+            document.getElementById('modal-qr').classList.remove('activo');
+        }
+        window.compartirLinkWeb = function() {
             if (navigator.share) {
                 navigator.share({
                     title: 'TurismoTrips Paraguay',
-                    text: '🚕 Pedí tu viaje rápido y seguro. Escaneá nuestro QR o tocá el link para conectar con nosotros 👇',
+                    text: '🚕 Pedí tu viaje rápido y seguro. Entrá al link para conectar con nosotros 👇',
                     url: linkPlataforma
                 }).catch(console.error);
             } else {
                 navigator.clipboard.writeText(linkPlataforma);
-                mostrarNotificacion("Enlace copiado. ¡Generá tu código QR con este link!");
+                mostrarNotificacion("¡Enlace web copiado exitosamente!");
             }
         }
 
@@ -161,7 +190,7 @@
 
         window.restaurarDescartados = function() {
             if(!auth.currentUser) return;
-            mostrarNotificacion("Buscando nuevos viajes...");
+            mostrarNotificacion("Actualizando pantalla y buscando viajes...");
             db.ref('viajes_turismo/pendientes').once('value').then(snapshot => {
                 if(snapshot.exists()) {
                     snapshot.forEach(child => {
@@ -172,12 +201,11 @@
         }
 
         function formatearFechaBonita(fechaStr) {
-            if(!fechaStr) return "No especificada";
+            if(!fechaStr || typeof fechaStr !== 'string') return "Fecha pendiente";
             let partes = fechaStr.split('-');
             if(partes.length !== 3) return fechaStr;
-            let anio = parseInt(partes[0]);
-            let mes = parseInt(partes[1]) - 1;
-            let dia = parseInt(partes[2]);
+            let anio = parseInt(partes[0]); let mes = parseInt(partes[1]) - 1; let dia = parseInt(partes[2]);
+            if (isNaN(anio) || isNaN(mes) || isNaN(dia)) return fechaStr;
             return `${dia} de ${mesesNombre[mes]}`;
         }
 
@@ -225,7 +253,8 @@
                     let misDestinosActivos = [];
                     listaViajes.forEach(v => {
                         if (v.choferAsignadoUid === choferUid) {
-                            let ciudadDestino = (v.destino || "").split(' (')[0].trim().toLowerCase();
+                            let destinoStr = String(v.destino || "");
+                            let ciudadDestino = destinoStr.split(' (')[0].trim().toLowerCase();
                             if(ciudadDestino) misDestinosActivos.push(ciudadDestino);
                         }
                     });
@@ -235,11 +264,15 @@
                             if (v.descartados && v.descartados[choferUid]) return;
                             
                             let esMio = (v.choferAsignadoUid === choferUid);
-                            if (v.choferAsignadoUid && !esMio) return; 
+                            if (v.choferAsignadoUid && !esMio) return; // Ocultar viajes de otros choferes
 
-                            let ciudadBaseChofer = choferPerfilData && choferPerfilData.ciudadBase ? choferPerfilData.ciudadBase.split(' (')[0] : "Asunción";
-                            let origenLimpio = (v.origen || "Paraguay").split(' (')[0].trim();
-                            let destinoLimpio = (v.destino || "Paraguay").split(' (')[0].trim();
+                            // BLINDAJE DE DATOS: Aseguramos que siempre sean cadenas de texto
+                            let origenStr = String(v.origen || "Ciudad Desconocida");
+                            let destinoStr = String(v.destino || "Ciudad Desconocida");
+                            let ciudadBaseChofer = choferPerfilData && choferPerfilData.ciudadBase ? String(choferPerfilData.ciudadBase).split(' (')[0] : "Asunción";
+                            
+                            let origenLimpio = origenStr.split(' (')[0].trim();
+                            let destinoLimpio = destinoStr.split(' (')[0].trim();
 
                             let esMatchRetorno = false;
                             if(!esMio && misDestinosActivos.length > 0) {
@@ -260,10 +293,10 @@
                             let miOferta = (v.ofertas && v.ofertas[choferUid]) ? v.ofertas[choferUid] : null;
                             let fechaLegible = formatearFechaBonita(v.fecha);
                             
-                            let vCliente = v.cliente || 'Pasajero';
-                            let vVehiculo = choferPerfilData.vehiculo || 'Vehículo';
-                            let vNombreChofer = choferPerfilData.nombre || 'Chofer';
-                            let vTelefonoStr = (v.telefono || '').replace(/^0+/, '');
+                            let vCliente = String(v.cliente || 'Pasajero');
+                            let vVehiculo = String(choferPerfilData.vehiculo || 'Vehículo');
+                            let vNombreChofer = String(choferPerfilData.nombre || 'Chofer');
+                            let vTelefonoStr = String(v.telefono || '').replace(/^0+/, '');
 
                             let textoWpp = `Hola ${vCliente}, sobre tu viaje de ${origenLimpio} a ${destinoLimpio} el ${fechaLegible}. Soy el chofer ${vNombreChofer} (${vVehiculo}). Mi tarifa es de ${miOferta ? miOferta.precio : 'a convenir'}. ¿Acordamos?`;
                             let linkWppDirecto = `https://wa.me/595${vTelefonoStr}?text=${encodeURIComponent(textoWpp)}`;
@@ -331,7 +364,7 @@
                                 htmlNormal += bloqueHTML;
                             }
 
-                        } catch (error) { console.error("Error renderizando:", error); }
+                        } catch (error) { console.error("Error protegido en viaje:", error); }
                     });
 
                     let finalView = "";

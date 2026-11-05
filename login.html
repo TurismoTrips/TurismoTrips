@@ -12,7 +12,6 @@
         .form-group label { display: block; margin-bottom: 4px; font-size: 0.85rem; color: var(--text-muted); }
         .form-group input[type="text"], .form-group input[type="tel"], .form-group input[type="email"], .form-group input[type="password"], .form-group select { width: 100%; padding: 11px; border-radius: 8px; border: 1px solid var(--border); background: #020617; color: white; box-sizing: border-box; outline:none;}
         
-        /* DISEÑO BOTÓN SUBIR FOTO */
         .file-upload-wrapper { position: relative; width: 100%; height: 45px; border: 1px dashed var(--primary); border-radius: 8px; background: rgba(2, 132, 199, 0.1); display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; }
         .file-upload-wrapper input[type="file"] { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
         .file-upload-text { color: var(--primary); font-weight: bold; font-size: 0.9rem; pointer-events: none;}
@@ -42,7 +41,7 @@
             <div class="form-group"><label>Nombre Completo</label><input type="text" id="reg-nombre"></div>
             <div class="form-group"><label>Teléfono (WhatsApp)</label><input type="tel" id="reg-tel"></div>
             
-            <div class="form-group"><label>Modelo del Vehículo</label><input type="text" id="reg-vehiculo" placeholder="Ej: Toyota Vitz 2012"></div>
+            <div class="form-group"><label>Modelo y Año del Vehículo</label><input type="text" id="reg-vehiculo" placeholder="Ej: Toyota Vitz 2012"></div>
             
             <div class="grid-2">
                 <div class="form-group"><label>Color del Auto</label><input type="text" id="reg-color" placeholder="Ej: Plata / Rojo"></div>
@@ -75,7 +74,7 @@
         </div>
     </div>
 
-    <!-- FIREBASE COMPAT (Agregamos Storage) -->
+    <!-- FIREBASE COMPAT -->
     <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-database-compat.js"></script>
@@ -87,7 +86,7 @@
             authDomain: "gestorinmobiliario-d68b3.firebaseapp.com",
             projectId: "gestorinmobiliario-d68b3",
             databaseURL: "https://gestorinmobiliario-d68b3-default-rtdb.firebaseio.com",
-            storageBucket: "gestorinmobiliario-d68b3.appspot.com" // Asegúrate que este sea el bucket correcto
+            storageBucket: "gestorinmobiliario-d68b3.appspot.com"
         };
         if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const auth = firebase.auth(); const db = firebase.database(); const storage = firebase.storage();
@@ -123,11 +122,9 @@
             btn.disabled = true;
 
             try {
-                // 1. Crear usuario
                 const userCred = await auth.createUserWithEmailAndPassword(email, pass);
                 const uid = userCred.user.uid;
 
-                // 2. Subir imagen si seleccionó una
                 let fotoUrl = "";
                 const archivoFoto = document.getElementById('reg-foto-archivo').files[0];
                 
@@ -137,14 +134,13 @@
                     fotoUrl = await snapshot.ref.getDownloadURL();
                 }
 
-                // 3. Guardar datos en Base de Datos
                 const data = {
                     nombre: nombre,
                     telefono: document.getElementById('reg-tel').value,
                     vehiculo: document.getElementById('reg-vehiculo').value,
                     color: document.getElementById('reg-color').value || "No especificado",
                     chapa: document.getElementById('reg-chapa').value || "En trámite",
-                    fotoVehiculo: fotoUrl, // Aquí va el enlace generado automáticamente
+                    fotoVehiculo: fotoUrl,
                     ciudadBase: document.getElementById('reg-ciudad').value
                 };
 

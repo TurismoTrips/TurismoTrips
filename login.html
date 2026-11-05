@@ -2,74 +2,72 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <!-- ESTA ES LA LÍNEA QUE ARREGLA LA PANTALLA EN EL CELULAR -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>Acceso Conductores</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TurismoTrips | Acceso Conductor</title>
     <style>
-        :root { --primary: #0284c7; --bg-base: #0f172a; --bg-card: #1e293b; --text-muted: #94a3b8; --border: #334155; }
-        body { font-family: sans-serif; background: var(--bg-base); margin: 0; display: flex; justify-content: center; padding-top: 20px; padding-bottom: 30px; color: white;}
-        .card { background: var(--bg-card); padding: 30px; border-radius: 12px; width: 90%; max-width: 420px; border: 1px solid var(--border); box-sizing: border-box;}
-        h3 { color: white; margin-top: 0; }
-        .form-group { margin-bottom: 14px; position: relative;}
-        .form-group label { display: block; margin-bottom: 6px; font-size: 0.82rem; color: var(--text-muted); font-weight: bold;}
-        .form-group input, .form-group select { width: 100%; padding: 11px; border-radius: 8px; border: 1px solid var(--border); background: #020617; color: white; box-sizing: border-box; outline: none;}
-        .form-group input:focus, .form-group select:focus { border-color: var(--primary); }
-        .password-wrapper { position: relative; display: flex; align-items: center; }
-        .password-wrapper input { padding-right: 75px; }
-        .btn-ver-pass { position: absolute; right: 10px; background: transparent; border: none; color: var(--primary); font-size: 0.75rem; font-weight: bold; cursor: pointer; text-transform: uppercase; padding: 5px 8px; }
-        .btn-ver-pass:hover { color: white; }
-        .btn-opcion { background: var(--primary); border: none; color: white; padding: 15px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px;}
-        .btn-secundario { background: transparent; color: var(--text-muted); border: none; width: 100%; cursor: pointer; padding: 10px; margin-top: 10px; text-decoration: underline;}
-        #toast { position: fixed; bottom: 20px; left:50%; transform:translateX(-50%); background: #ef4444; color: white; padding: 10px 20px; border-radius: 8px; display: none; z-index: 999; text-align:center; width: 80%;}
+        :root { --primary: #0284c7; --bg-base: #0f172a; --bg-card: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --border: #334155; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-base); color: var(--text-main); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; box-sizing: border-box;}
+        .card { background: var(--bg-card); padding: 25px; border-radius: 12px; border: 1px solid var(--border); width: 100%; max-width: 420px; box-sizing: border-box; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; margin-bottom: 4px; font-size: 0.85rem; color: var(--text-muted); }
+        .form-group input, .form-group select { width: 100%; padding: 11px; border-radius: 8px; border: 1px solid var(--border); background: #020617; color: white; box-sizing: border-box; outline:none;}
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 13px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px;}
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab { flex: 1; padding: 10px; text-align: center; background: transparent; border: 1px solid var(--border); color: var(--text-muted); border-radius: 8px; cursor: pointer; }
+        .tab.active { background: var(--primary); color: white; border-color: var(--primary); }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     </style>
 </head>
 <body>
-    <div id="toast">Error</div>
-    
-    <!-- LOGIN -->
-    <div class="card" id="caja-login">
-        <h3>Acceso a Conductores</h3>
-        <div class="form-group"><label>Correo</label><input type="email" id="log-email" autocomplete="email"></div>
-        <div class="form-group">
-            <label>Contraseña</label>
-            <div class="password-wrapper">
-                <input type="password" id="log-pass" autocomplete="current-password">
-                <button type="button" class="btn-ver-pass" onclick="togglePassword('log-pass', this)">Ver</button>
-            </div>
+    <div class="card">
+        <h2 style="margin-top:0; text-align:center;">Acceso Choferes</h2>
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('login')" id="tab-login">Ingresar</div>
+            <div class="tab" onclick="switchTab('register')" id="tab-register">Registrarse</div>
         </div>
-        <button class="btn-opcion" onclick="loginChofer()">Ingresar al Panel</button>
-        <button class="btn-secundario" onclick="document.getElementById('caja-login').style.display='none'; document.getElementById('caja-registro').style.display='block';">No tengo cuenta. Registrarme</button>
-        <button class="btn-secundario" onclick="window.location.href='index.html'">Volver al Inicio</button>
+
+        <div id="form-login">
+            <div class="form-group"><label>Correo Electrónico</label><input type="email" id="log-email"></div>
+            <div class="form-group"><label>Contraseña</label><input type="password" id="log-pass"></div>
+            <button class="btn-primary" onclick="login()">Entrar al Panel</button>
+        </div>
+
+        <div id="form-register" style="display:none;">
+            <div class="form-group"><label>Nombre Completo</label><input type="text" id="reg-nombre"></div>
+            <div class="form-group"><label>Teléfono (WhatsApp)</label><input type="tel" id="reg-tel"></div>
+            
+            <div class="form-group"><label>Modelo del Vehículo</label><input type="text" id="reg-vehiculo" placeholder="Ej: Toyota Vitz 2012"></div>
+            
+            <div class="grid-2">
+                <div class="form-group"><label>Color del Auto</label><input type="text" id="reg-color" placeholder="Ej: Plata / Rojo"></div>
+                <div class="form-group"><label>N° de Chapa</label><input type="text" id="reg-chapa" placeholder="Ej: AA123BB"></div>
+            </div>
+
+            <div class="form-group"><label>Enlace Foto del Auto (Para publicidad)</label><input type="url" id="reg-foto" placeholder="https://ejemplo.com/foto.jpg"></div>
+            
+            <div class="form-group"><label>Ciudad Base</label>
+                <select id="reg-ciudad">
+                    <option value="Asunción (Central)">Asunción (Central)</option>
+                    <option value="Itauguá (Central)">Itauguá (Central)</option>
+                    <option value="Capiatá (Central)">Capiatá (Central)</option>
+                    <option value="San Lorenzo (Central)">San Lorenzo (Central)</option>
+                    <option value="Luque (Central)">Luque (Central)</option>
+                    <option value="Paraguarí (Paraguarí)">Paraguarí (Paraguarí)</option>
+                    <option value="Ciudad del Este (Alto Paraná)">Ciudad del Este (Alto Paraná)</option>
+                </select>
+            </div>
+            
+            <div class="form-group"><label>Correo Electrónico</label><input type="email" id="reg-email"></div>
+            <div class="form-group"><label>Contraseña (Mínimo 6 letras)</label><input type="password" id="reg-pass"></div>
+            <button class="btn-primary" onclick="registrar()">Crear Cuenta Conductor</button>
+        </div>
     </div>
 
-    <!-- REGISTRO -->
-    <div class="card" id="caja-registro" style="display:none;">
-        <h3>Registro de Conductor</h3>
-        <div class="form-group"><label>Nombre Completo</label><input type="text" id="reg-nombre" autocomplete="name"></div>
-        <div class="form-group"><label>Vehículo (Marca, Modelo y Año)</label><input type="text" id="reg-vehiculo" placeholder="Ej: Toyota Noah 2012"></div>
-        <div class="form-group"><label>WhatsApp del Chofer</label><input type="tel" id="reg-telefono" placeholder="Ej: 0981234567" autocomplete="tel"></div>
-        
-        <div class="grid-2">
-            <div class="form-group"><label>Departamento Base</label><select id="reg-depto" onchange="actCiuChofer()"></select></div>
-            <div class="form-group"><label>Ciudad Base</label><select id="reg-ciudad"></select></div>
-        </div>
-
-        <div class="form-group"><label>Correo Electrónico</label><input type="email" id="reg-email" autocomplete="email"></div>
-        <div class="form-group">
-            <label>Contraseña</label>
-            <div class="password-wrapper">
-                <input type="password" id="reg-pass" autocomplete="new-password">
-                <button type="button" class="btn-ver-pass" onclick="togglePassword('reg-pass', this)">Ver</button>
-            </div>
-        </div>
-        <button class="btn-opcion" onclick="registrarChofer()">Crear Cuenta</button>
-        <button class="btn-secundario" onclick="document.getElementById('caja-registro').style.display='none'; document.getElementById('caja-login').style.display='block';">Ya tengo cuenta. Ingresar</button>
-    </div>
-
+    <!-- FIREBASE COMPAT -->
     <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-database-compat.js"></script>
+
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyAg6rZnqUFgTcRiAHA0AWvYR-imovVb_0s",
@@ -77,83 +75,44 @@
             projectId: "gestorinmobiliario-d68b3",
             databaseURL: "https://gestorinmobiliario-d68b3-default-rtdb.firebaseio.com"
         };
-        firebase.initializeApp(firebaseConfig);
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const auth = firebase.auth(); const db = firebase.database();
 
-        const deptosPy = {
-            "Asunción (Capital)": ["Asunción"],
-            "Central": ["Itauguá", "Areguá", "Capiatá", "Fernando de la Mora", "Guarambaré", "Itá", "J. Augusto Saldívar", "Lambaré", "Limpio", "Luque", "Mariano R. Alonso", "Nueva Italia", "Ñemby", "San Antonio", "San Lorenzo", "Villa Elisa", "Villeta", "Ypacaraí", "Ypané"],
-            "Cordillera": ["Caacupé", "Altos", "Arroyos y Esteros", "Atyrá", "Caraguatay", "Emboscada", "Eusebio Ayala", "Isla Pucú", "Itacurubí de la Cordillera", "Piribebuy", "San Bernardino", "Tobatí"],
-            "Paraguarí": ["Paraguarí", "Acahay", "Caapucú", "Carapeguá", "Escobar", "La Colmena", "Mbuyapey", "Pirayú", "Quiindy", "Quyquyhó", "San Roque González", "Sapucai", "Yaguarón", "Ybycuí"],
-            "Alto Paraná": ["Ciudad del Este", "Hernandarias", "Minga Guazú", "Presidente Franco", "Santa Rita", "Yguazú"],
-            "Itapúa": ["Encarnación", "Bella Vista", "Carmen del Paraná", "Colonias Unidas", "Coronel Bogado", "Hohenau", "Obligado", "San Cosme y Damián"],
-            "Caaguazú": ["Coronel Oviedo", "Caaguazú", "J. Eulogio Estigarribia (Campo 9)", "San José de los Arroyos"],
-            "Guairá": ["Villarrica", "Colonia Independencia", "Itapé", "Mbocayaty"],
-            "Concepción": ["Concepción", "Horqueta", "Loreto", "Yby Yaú"],
-            "San Pedro": ["San Pedro del Ycuamandyyú", "Santa Rosa del Aguaray", "San Estanislao (Santaní)"],
-            "Caazapá": ["Caazapá", "Atyrá", "Yuty"],
-            "Misiones": ["San Juan Bautista", "Ayolas", "San Ignacio", "Santa Rosa"],
-            "Ñeembucú": ["Pilar", "Alberdi", "Cerrito"],
-            "Amambay": ["Pedro Juan Caballero", "Bella Vista Norte", "Capitán Bado"],
-            "Canindeyú": ["Salto del Guairá", "Curuguaty"],
-            "Presidente Hayes": ["Villa Hayes", "Benjamín Aceval"],
-            "Boquerón": ["Filadelfia", "Loma Plata", "Neuland"],
-            "Alto Paraguay": ["Fuerte Olimpo", "Bahía Negra"]
-        };
-
-        window.onload = function() {
-            let htmlD = '';
-            for(let d in deptosPy) htmlD += `<option value="${d}">${d}</option>`;
-            document.getElementById('reg-depto').innerHTML = htmlD;
-            actCiuChofer();
+        function switchTab(tab) {
+            document.getElementById('form-login').style.display = tab === 'login' ? 'block' : 'none';
+            document.getElementById('form-register').style.display = tab === 'register' ? 'block' : 'none';
+            document.getElementById('tab-login').className = tab === 'login' ? 'tab active' : 'tab';
+            document.getElementById('tab-register').className = tab === 'register' ? 'tab active' : 'tab';
         }
 
-        function actCiuChofer() {
-            let d = document.getElementById('reg-depto').value;
-            let html = ''; (deptosPy[d] || []).forEach(c => html += `<option value="${c}">${c}</option>`);
-            document.getElementById('reg-ciudad').innerHTML = html;
+        function login() {
+            auth.signInWithEmailAndPassword(document.getElementById('log-email').value, document.getElementById('log-pass').value)
+                .then(() => window.location.href = 'panel_chofer.html')
+                .catch(e => alert("Error al ingresar: " + e.message));
         }
 
-        function mostrarError(msg) { 
-            let t = document.getElementById('toast');
-            t.innerText = msg; t.style.display = 'block'; 
-            setTimeout(() => t.style.display = 'none', 4000); 
-        }
+        function registrar() {
+            const email = document.getElementById('reg-email').value;
+            const pass = document.getElementById('reg-pass').value;
+            const data = {
+                nombre: document.getElementById('reg-nombre').value,
+                telefono: document.getElementById('reg-tel').value,
+                vehiculo: document.getElementById('reg-vehiculo').value,
+                color: document.getElementById('reg-color').value || "No especificado",
+                chapa: document.getElementById('reg-chapa').value || "En trámite",
+                fotoVehiculo: document.getElementById('reg-foto').value || "",
+                ciudadBase: document.getElementById('reg-ciudad').value
+            };
 
-        function togglePassword(idInput, btn) {
-            let input = document.getElementById(idInput);
-            if(input.type === "password") { input.type = "text"; btn.innerText = "Ocultar"; }
-            else { input.type = "password"; btn.innerText = "Ver"; }
-        }
+            if(!data.nombre || !data.telefono || !data.vehiculo) {
+                return alert("Por favor complete nombre, teléfono y vehículo.");
+            }
 
-        function loginChofer() {
-            let email = document.getElementById('log-email').value.trim(); 
-            let pass = document.getElementById('log-pass').value.trim();
-            if(!email || !pass) return mostrarError("Ingrese correo y contraseña");
-            
-            auth.signInWithEmailAndPassword(email, pass).then(() => {
-                window.location.href = 'panel_chofer.html';
-            }).catch(e => mostrarError("Error: Contraseña incorrecta o usuario no válido."));
-        }
-
-        function registrarChofer() {
-            let nombre = document.getElementById('reg-nombre').value.trim(); 
-            let vehiculo = document.getElementById('reg-vehiculo').value.trim();
-            let tel = document.getElementById('reg-telefono').value.trim(); 
-            let depto = document.getElementById('reg-depto').value;
-            let ciudad = document.getElementById('reg-ciudad').value;
-            let email = document.getElementById('reg-email').value.trim(); 
-            let pass = document.getElementById('reg-pass').value.trim();
-            
-            if(!nombre || !email || !pass || !ciudad) return mostrarError("Complete todos los campos obligatorios");
-            if(pass.length < 6) return mostrarError("La contraseña debe tener al menos 6 caracteres");
-            
-            auth.createUserWithEmailAndPassword(email, pass).then((userCred) => {
-                let perfil = { nombre: nombre, vehiculo: vehiculo, telefono: tel, ciudadBase: ciudad + " (" + depto + ")", email: email };
-                db.ref(`choferes_turismo/${userCred.user.uid}`).set(perfil).then(() => {
+            auth.createUserWithEmailAndPassword(email, pass).then(userCred => {
+                db.ref(`choferes_turismo/${userCred.user.uid}`).set(data).then(() => {
                     window.location.href = 'panel_chofer.html';
                 });
-            }).catch(e => mostrarError("Error al registrar: " + e.message));
+            }).catch(e => alert("Error en registro: " + e.message));
         }
     </script>
 </body>

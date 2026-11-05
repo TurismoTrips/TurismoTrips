@@ -3,381 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TurismoTrips | Panel de Conductor</title>
+    <title>TurismoTrips | Panel Conductor</title>
     <style>
-        :root { 
-            --primary: #0284c7; 
-            --primary-hover: #0369a1;
-            --bg-base: #0f172a; 
-            --bg-card: #1e293b; 
-            --bg-input: #334155;
-            --text-main: #f8fafc; 
-            --text-muted: #94a3b8; 
-            --border: #334155; 
-            --success: #16a34a; 
-            --danger: #dc2626; 
-        }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg-base); color: var(--text-main); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; box-sizing: border-box;}
-        
+        :root { --primary: #0284c7; --bg-base: #0f172a; --bg-card: #1e293b; --bg-input: #334155; --text-main: #f8fafc; --text-muted: #94a3b8; --border: #334155; --success: #16a34a; --danger: #dc2626; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg-base); color: var(--text-main); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; min-height: 100vh;}
         .container { width: 100%; max-width: 600px; }
         
-        /* HEADER ESTILO PROFESIONAL */
-        .header-panel { background: var(--bg-card); padding: 20px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        .header-panel h2 { margin: 0 0 15px 0; font-size: 1.4rem; color: white; border-bottom: 1px solid var(--border); padding-bottom: 10px;}
-        .header-acciones { display: flex; gap: 10px; width: 100%; }
+        .header-panel { background: var(--bg-card); padding: 20px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .header-acciones { display: flex; gap: 10px; width: 100%; margin-top: 15px; }
         
-        /* TARJETAS LIMPIAS Y ESPACIADAS */
-        .viaje-card { background: var(--bg-card); border: 1px solid var(--border); padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .viaje-card { background: var(--bg-card); border: 1px solid var(--border); padding: 20px; border-radius: 12px; margin-bottom: 20px; }
         .viaje-card.asignado { border-left: 5px solid var(--success); }
-        .viaje-card.retorno { border-left: 5px solid #d946ef; }
         
-        .ruta-titulo { font-size: 1.25rem; font-weight: 700; color: white; margin: 0 0 15px 0; line-height: 1.4;}
-        .ruta-titulo span { display: block; font-size: 0.9rem; font-weight: 400; color: var(--text-muted); margin-bottom: 5px;}
-        
-        .info-grupo { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
-        .info-item { font-size: 0.95rem; color: var(--text-main); display: flex; align-items: flex-start; gap: 8px; }
-        .info-item strong { color: var(--text-muted); font-weight: normal; min-width: 70px; }
-        
-        .divisor { height: 1px; background: var(--border); margin: 15px 0; border: none; }
-
-        /* BOTONES GRANDES Y CLAROS */
-        .btn { padding: 14px 16px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; text-align: center; width: 100%; border: none; transition: 0.2s; display: block; box-sizing: border-box; }
+        .btn { padding: 12px 15px; border-radius: 8px; font-size: 0.95rem; font-weight: bold; cursor: pointer; text-align: center; width: 100%; border: none; }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-hover); }
         .btn-success { background: var(--success); color: white; }
         .btn-outline { background: transparent; color: var(--text-main); border: 1px solid var(--border); }
-        .btn-outline:hover { background: var(--bg-input); }
-        .btn-danger-outline { background: transparent; color: #f87171; border: 1px solid var(--danger); }
-        
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         
-        /* FORMULARIOS / INPUTS */
         .caja-tarifa { background: var(--bg-base); padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-top: 15px; }
-        .caja-tarifa label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;}
-        .input-grande { width: 100%; padding: 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-input); color: white; font-size: 1.1rem; box-sizing: border-box; outline: none; margin-bottom: 10px;}
-        .input-grande:focus { border-color: var(--primary); }
+        .caja-tarifa input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-input); color: white; margin-bottom: 10px; box-sizing:border-box;}
 
-        .etiqueta { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; background: var(--bg-input); color: white; }
-        .etiqueta.verde { background: rgba(22, 163, 74, 0.2); color: #4ade80; }
-        
-        .alerta-retorno { background: rgba(217, 70, 239, 0.1); color: #e879f9; padding: 10px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 0.9rem; margin-bottom: 15px; border: 1px dashed #d946ef;}
-
-        /* MODAL DEL CÓDIGO QR */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: 0.3s; }
+        /* MODAL DE PUBLICIDAD / FLYER */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal-overlay.activo { opacity: 1; pointer-events: auto; }
-        .modal-content { background: var(--bg-card); padding: 25px; border-radius: 15px; text-align: center; border: 1px solid var(--border); width: 90%; max-width: 320px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
-        .modal-content h3 { margin: 0 0 10px 0; color: white; font-size: 1.3rem;}
-        .modal-content p { margin: 0 0 20px 0; font-size: 0.9rem; color: var(--text-muted); }
-        .img-qr { width: 220px; height: 220px; border-radius: 10px; border: 5px solid white; margin-bottom: 20px; background: white;}
-
-        #toast-notification {
-            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%) translateY(100px);
-            background: #334155; color: white; border: 1px solid #475569; padding: 14px 24px;
-            border-radius: 30px; font-weight: 600; font-size: 0.95rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            opacity: 0; transition: all 0.3s ease-in-out; z-index: 999; pointer-events: none; text-align: center; width: 90%; max-width: 400px;
-        }
-        #toast-notification.activo { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .modal-content { background: var(--bg-card); padding: 20px; border-radius: 15px; text-align: center; width: 90%; max-width: 360px; }
+        
+        .flayer-promo { background: #ffffff; color: #020617; padding: 20px; border-radius: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); overflow: hidden; position: relative; }
+        .flayer-promo h3 { margin: 0 0 4px 0; font-size: 1.3rem; color: #0284c7; text-transform: uppercase; font-weight: 900; }
+        .flayer-promo .sub-titulo { font-size: 0.8rem; color: #64748b; margin-bottom: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .flayer-foto-auto { width: 100%; height: 160px; object-fit: cover; border-radius: 10px; margin-bottom: 12px; border: 1px solid #e2e8f0; background: #f1f5f9; }
+        
+        .flayer-promo .auto-info { font-size: 1rem; font-weight: bold; color: #1e293b; margin-bottom: 12px; }
+        .flayer-promo .img-qr { width: 160px; height: 160px; margin: 0 auto; display: block; border: 4px solid #0284c7; border-radius: 8px; }
+        .flayer-promo .cta-text { margin-top: 12px; font-size: 0.85rem; font-weight: bold; background: #16a34a; color: white; padding: 8px; border-radius: 6px; }
+        .flayer-promo .footer-zona { font-size: 0.75rem; color: #475569; margin-top: 8px; font-weight: 600; }
     </style>
 </head>
 <body>
 
-    <div id="toast-notification">Mensaje del sistema</div>
-
-    <!-- MODAL DEL QR VISUAL -->
     <div id="modal-qr" class="modal-overlay">
         <div class="modal-content">
-            <h3>Tu Código QR</h3>
-            <p>Muestra esta pantalla al pasajero o sácale captura para imprimir tu sticker.</p>
+            <h3 style="color:white; margin: 0 0 10px 0;">📢 Tu Placa Publicitaria</h3>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:15px;">Capturá esta pantalla para publicarla en Facebook o Estados de WhatsApp.</p>
             
-            <!-- API Segura y Gratuita para generar el QR real -->
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://turismotrips.github.io/TurismoTrips/" alt="QR TurismoTrips" class="img-qr">
+            <div class="flayer-promo">
+                <h3 id="promo-nombre">Conductor TurismoTrips</h3>
+                <div class="sub-titulo">Servicio Privado & Larga Distancia</div>
+                
+                <img id="promo-foto-img" src="" class="flayer-foto-auto" style="display:none;" alt="Foto Vehículo">
+                
+                <div class="auto-info" id="promo-auto">Vehículo Confortable</div>
+                
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://turismotrips.github.io/TurismoTrips/" alt="QR" class="img-qr">
+                
+                <div class="cta-text">📲 ESCANEÁ EL QR PARA PEDIR TU VIAJE</div>
+                <div class="footer-zona" id="promo-zona">Base de Operaciones: Paraguay</div>
+            </div>
             
-            <button class="btn btn-success" onclick="compartirLinkWeb()">📲 Compartir Link por Web</button>
-            <button class="btn btn-outline" style="margin-top: 10px;" onclick="cerrarModalQR()">Cerrar</button>
+            <button class="btn btn-outline" style="margin-top: 15px;" onclick="cerrarModalQR()">Cerrar</button>
         </div>
     </div>
 
     <div class="container">
-        
-        <!-- ENCABEZADO LIMPIO -->
         <div class="header-panel">
-            <h2 id="panel-nombre-chofer">Mi Panel</h2>
+            <h2 id="panel-nombre-chofer" style="margin:0; font-size:1.4rem;">Mi Panel</h2>
             <div class="header-acciones">
-                <button class="btn btn-outline" style="font-size: 0.9rem; padding: 12px;" onclick="restaurarDescartados()">Actualizar</button>
-                <button class="btn btn-outline" style="font-size: 0.9rem; padding: 12px;" onclick="abrirModalQR()">Ver Mi QR</button>
-                <button class="btn btn-outline" style="font-size: 0.9rem; padding: 12px; color:#f87171;" onclick="cerrarSesion()">Salir</button>
+                <button class="btn btn-outline" onclick="restaurarDescartados()">🔄 Recargar</button>
+                <button class="btn btn-outline" onclick="abrirModalQR()">📢 Mi Publicidad</button>
+                <button class="btn btn-outline" style="color:#f87171;" onclick="cerrarSesion()">Salir</button>
             </div>
         </div>
-        
-        <h3 style="color:var(--text-muted); font-size: 1rem; margin-bottom: 15px; font-weight: normal;">Bolsa de Viajes Disponibles:</h3>
-
-        <div id="contenedor-viajes-chofer">
-            <p style="color:var(--text-muted); text-align:center; padding: 20px;">Cargando sistema...</p>
-        </div>
+        <div id="contenedor-viajes-chofer"><p style="text-align:center;">Cargando solicitudes...</p></div>
     </div>
 
-    <!-- FIREBASE COMPAT -->
     <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-database-compat.js"></script>
-
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyAg6rZnqUFgTcRiAHA0AWvYR-imovVb_0s",
-            authDomain: "gestorinmobiliario-d68b3.firebaseapp.com",
-            projectId: "gestorinmobiliario-d68b3",
-            databaseURL: "https://gestorinmobiliario-d68b3-default-rtdb.firebaseio.com"
-        };
-        
+        const firebaseConfig = { apiKey: "AIzaSyAg6rZnqUFgTcRiAHA0AWvYR-imovVb_0s", authDomain: "gestorinmobiliario-d68b3.firebaseapp.com", projectId: "gestorinmobiliario-d68b3", databaseURL: "https://gestorinmobiliario-d68b3-default-rtdb.firebaseio.com" };
         if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.database(); const auth = firebase.auth();
-
         let choferPerfilData = null;
-        let choferLatActual = null; let choferLonActual = null;
-        const mesesNombre = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-        const linkPlataforma = "https://turismotrips.github.io/TurismoTrips/";
 
-        window.mostrarNotificacion = function(mensaje) {
-            let toast = document.getElementById('toast-notification');
-            toast.innerText = mensaje; toast.classList.add('activo');
-            setTimeout(() => { toast.classList.remove('activo'); }, 4000);
-        }
-
-        /* FUNCIONES DEL MODAL QR */
-        window.abrirModalQR = function() {
-            document.getElementById('modal-qr').classList.add('activo');
-        }
-        window.cerrarModalQR = function() {
-            document.getElementById('modal-qr').classList.remove('activo');
-        }
-        window.compartirLinkWeb = function() {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'TurismoTrips Paraguay',
-                    text: '🚕 Pedí tu viaje rápido y seguro. Entrá al link para conectar con nosotros 👇',
-                    url: linkPlataforma
-                }).catch(console.error);
-            } else {
-                navigator.clipboard.writeText(linkPlataforma);
-                mostrarNotificacion("¡Enlace web copiado exitosamente!");
-            }
-        }
-
-        function iniciarRastreoChofer(uid) {
-            if (navigator.geolocation) {
-                navigator.geolocation.watchPosition(position => {
-                    choferLatActual = position.coords.latitude; 
-                    choferLonActual = position.coords.longitude;
-                    db.ref(`choferes_turismo/${uid}/ubicacionEnVivo`).set({ lat: choferLatActual, lon: choferLonActual, ultimaActualizacion: new Date().toLocaleTimeString() });
-                }, error => { 
-                    console.log("GPS no disponible");
-                }, { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 });
-            }
-        }
+        window.abrirModalQR = function() { document.getElementById('modal-qr').classList.add('activo'); }
+        window.cerrarModalQR = function() { document.getElementById('modal-qr').classList.remove('activo'); }
 
         auth.onAuthStateChanged(user => {
             if(user) {
                 db.ref(`choferes_turismo/${user.uid}`).once('value').then(snap => {
-                    choferPerfilData = snap.exists() ? snap.val() : { nombre: "Conductor", vehiculo: "Vehículo", telefono: "0981", ciudadBase: "Asunción" };
-                    document.getElementById('panel-nombre-chofer').innerText = choferPerfilData.nombre || "Conductor";
-                    iniciarRastreoChofer(user.uid); 
+                    choferPerfilData = snap.exists() ? snap.val() : { nombre: "Conductor", vehiculo: "Vehículo", color: "Gris", chapa: "Sin Chapa", ciudadBase: "Asunción" };
+                    document.getElementById('panel-nombre-chofer').innerText = choferPerfilData.nombre;
+                    
+                    // Llenar datos de la placa publicitaria
+                    document.getElementById('promo-nombre').innerText = choferPerfilData.nombre;
+                    document.getElementById('promo-auto').innerText = `${choferPerfilData.vehiculo} • Color: ${choferPerfilData.color || 'No especificado'}`;
+                    document.getElementById('promo-zona').innerText = "Base de Operaciones: " + (choferPerfilData.ciudadBase || "Paraguay");
+
+                    let imgElement = document.getElementById('promo-foto-img');
+                    if(choferPerfilData.fotoVehiculo && choferPerfilData.fotoVehiculo.trim() !== "") {
+                        imgElement.src = choferPerfilData.fotoVehiculo;
+                        imgElement.style.display = "block";
+                    } else {
+                        imgElement.style.display = "none";
+                    }
+
                     cargarViajesPendientesChofer(user.uid);
                 });
             } else { window.location.href = 'login.html'; }
         });
 
-        window.cerrarSesion = function() { auth.signOut().then(() => { window.location.href = 'login.html'; }); }
-
-        window.restaurarDescartados = function() {
-            if(!auth.currentUser) return;
-            mostrarNotificacion("Actualizando pantalla y buscando viajes...");
-            db.ref('viajes_turismo/pendientes').once('value').then(snapshot => {
-                if(snapshot.exists()) {
-                    snapshot.forEach(child => {
-                        db.ref(`viajes_turismo/pendientes/${child.key}/descartados/${auth.currentUser.uid}`).remove();
-                    });
-                }
+        window.cerrarSesion = function() { auth.signOut().then(() => window.location.href = 'login.html'); }
+        window.restaurarDescartados = function() { db.ref(`viajes_turismo/pendientes`).once('value').then(snap => { snap.forEach(c => { db.ref(`viajes_turismo/pendientes/${c.key}/descartados/${auth.currentUser.uid}`).remove(); }); }); }
+        
+        window.enviarOfertaPrecio = function(viajeId) {
+            let precio = document.getElementById(`precio-${viajeId}`).value.trim();
+            if(!precio) return alert("Ingrese una tarifa en Guaraníes.");
+            db.ref(`viajes_turismo/pendientes/${viajeId}/ofertas/${auth.currentUser.uid}`).set({ 
+                choferNombre: choferPerfilData.nombre, 
+                choferVehiculo: choferPerfilData.vehiculo,
+                choferColor: choferPerfilData.color || "No especificado",
+                choferChapa: choferPerfilData.chapa || "Sin Chapa",
+                precio: parseInt(precio).toLocaleString('es-PY') + " Gs." 
             });
         }
 
-        function formatearFechaBonita(fechaStr) {
-            if(!fechaStr || typeof fechaStr !== 'string') return "Fecha pendiente";
-            let partes = fechaStr.split('-');
-            if(partes.length !== 3) return fechaStr;
-            let anio = parseInt(partes[0]); let mes = parseInt(partes[1]) - 1; let dia = parseInt(partes[2]);
-            if (isNaN(anio) || isNaN(mes) || isNaN(dia)) return fechaStr;
-            return `${dia} de ${mesesNombre[mes]}`;
-        }
-
-        window.enviarOfertaPrecio = function(viajeId) {
-            let precioInp = document.getElementById(`precio-${viajeId}`).value.trim();
-            if(!precioInp || isNaN(precioInp)) return mostrarNotificacion("Ingrese una tarifa válida (Solo números).");
-            db.ref(`viajes_turismo/pendientes/${viajeId}/ofertas/${auth.currentUser.uid}`).set({
-                choferNombre: choferPerfilData.nombre || "Chofer", 
-                choferVehiculo: choferPerfilData.vehiculo || "Vehículo",
-                choferTelefono: choferPerfilData.telefono || "", 
-                precio: parseInt(precioInp).toLocaleString('es-PY') + " Gs."
-            }).then(() => mostrarNotificacion("Su propuesta fue enviada al cliente."));
-        }
-
-        window.descartarViaje = function(viajeId) {
-            db.ref(`viajes_turismo/pendientes/${viajeId}/descartados/${auth.currentUser.uid}`).set(true);
-        }
-
-        window.confirmarAcuerdo = function(viajeId) {
-            if(confirm("Al confirmar, este viaje se te asignará y desaparecerá para otros choferes. ¿Continuar?")) {
-                db.ref(`viajes_turismo/pendientes/${viajeId}`).update({
-                    estado: 'Acuerdo Cerrado',
-                    choferAsignadoUid: auth.currentUser.uid
-                });
-            }
-        }
-
-        window.finalizarViaje = function(viajeId) {
-            if(confirm("¿El viaje ya terminó y dejaste al pasajero? Esto limpiará tu panel.")) {
-                db.ref(`viajes_turismo/pendientes/${viajeId}`).remove();
-            }
-        }
+        window.descartarViaje = function(viajeId) { db.ref(`viajes_turismo/pendientes/${viajeId}/descartados/${auth.currentUser.uid}`).set(true); }
+        window.confirmarAcuerdo = function(viajeId) { if(confirm("¿Confirmar trato con el pasajero?")) db.ref(`viajes_turismo/pendientes/${viajeId}`).update({ estado: 'Acuerdo Cerrado', choferAsignadoUid: auth.currentUser.uid }); }
+        window.finalizarViaje = function(viajeId) { if(confirm("¿Marcar este viaje como completado?")) db.ref(`viajes_turismo/pendientes/${viajeId}`).remove(); }
 
         function cargarViajesPendientesChofer(choferUid) {
             db.ref('viajes_turismo/pendientes').on('value', (snapshot) => {
-                let htmlRetornos = '';
-                let htmlNormal = '';
-                let htmlMisViajes = '';
-                
+                let html = '';
                 if(snapshot.exists()){
-                    let listaViajes = [];
-                    snapshot.forEach(child => listaViajes.push({ id: child.key, ...child.val() }));
-                    listaViajes.reverse();
-
-                    let misDestinosActivos = [];
-                    listaViajes.forEach(v => {
-                        if (v.choferAsignadoUid === choferUid) {
-                            let destinoStr = String(v.destino || "");
-                            let ciudadDestino = destinoStr.split(' (')[0].trim().toLowerCase();
-                            if(ciudadDestino) misDestinosActivos.push(ciudadDestino);
-                        }
-                    });
-
-                    listaViajes.forEach(v => {
+                    let lista = []; snapshot.forEach(c => lista.push({ id: c.key, ...c.val() })); lista.reverse();
+                    
+                    lista.forEach(v => {
                         try {
                             if (v.descartados && v.descartados[choferUid]) return;
-                            
                             let esMio = (v.choferAsignadoUid === choferUid);
-                            if (v.choferAsignadoUid && !esMio) return; // Ocultar viajes de otros choferes
+                            if (v.choferAsignadoUid && !esMio) return; 
 
-                            // BLINDAJE DE DATOS: Aseguramos que siempre sean cadenas de texto
-                            let origenStr = String(v.origen || "Ciudad Desconocida");
-                            let destinoStr = String(v.destino || "Ciudad Desconocida");
-                            let ciudadBaseChofer = choferPerfilData && choferPerfilData.ciudadBase ? String(choferPerfilData.ciudadBase).split(' (')[0] : "Asunción";
+                            let origenTxt = String(v.origen || "N/A").split(' (')[0];
+                            let destinoTxt = String(v.destino || "N/A").split(' (')[0];
                             
-                            let origenLimpio = origenStr.split(' (')[0].trim();
-                            let destinoLimpio = destinoStr.split(' (')[0].trim();
-
-                            let esMatchRetorno = false;
-                            if(!esMio && misDestinosActivos.length > 0) {
-                                let origenLower = origenLimpio.toLowerCase();
-                                if(misDestinosActivos.some(destino => origenLower.includes(destino) || destino.includes(origenLower))) {
-                                    esMatchRetorno = true;
-                                }
-                            }
-
-                            let claseCard = esMio ? 'viaje-card asignado' : (esMatchRetorno ? 'viaje-card retorno' : 'viaje-card');
-                            
-                            let puntoA = (choferLatActual && choferLonActual) ? `${choferLatActual},${choferLonActual}` : `${ciudadBaseChofer}, Paraguay`;
-                            let puntoB = (v.lat && v.lon) ? `${v.lat},${v.lon}` : `${origenLimpio}, Paraguay`;
-                            let puntoC = `${destinoLimpio}, Paraguay`;
-
-                            let linkGmaps = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(puntoA)}&destination=${encodeURIComponent(puntoC)}&waypoints=${encodeURIComponent(puntoB)}`;
+                            let vNombreChofer = String(choferPerfilData.nombre || 'Chofer');
+                            let vVehiculo = String(choferPerfilData.vehiculo || 'Vehículo');
+                            let vColor = String(choferPerfilData.color || 'No especificado');
+                            let vChapa = String(choferPerfilData.chapa || 'Sin Chapa');
                             
                             let miOferta = (v.ofertas && v.ofertas[choferUid]) ? v.ofertas[choferUid] : null;
-                            let fechaLegible = formatearFechaBonita(v.fecha);
+
+                            // MENSAJE DE WHATSAPP CON DATOS DE SEGURIDAD (CHAPA + COLOR)
+                            let textoWpp = `Hola ${v.cliente || 'Pasajero'}, sobre tu viaje de ${origenTxt} a ${destinoTxt} el ${v.fecha || ''}. Soy el chofer *${vNombreChofer}*. \n\n🚗 *Vehículo para tu viaje:* ${vVehiculo}\n🎨 *Color:* ${vColor}\n🔢 *Chapa:* ${vChapa}\n💰 *Tarifa:* ${miOferta ? miOferta.precio : 'a convenir'}. ¿Coordinamos?`;
                             
-                            let vCliente = String(v.cliente || 'Pasajero');
-                            let vVehiculo = String(choferPerfilData.vehiculo || 'Vehículo');
-                            let vNombreChofer = String(choferPerfilData.nombre || 'Chofer');
-                            let vTelefonoStr = String(v.telefono || '').replace(/^0+/, '');
+                            let linkWpp = `https://wa.me/595${String(v.telefono || '').replace(/^0+/, '')}?text=${encodeURIComponent(textoWpp)}`;
+                            
+                            let linkGmaps = "https://www.google.com/maps";
+                            try {
+                                let cBase = String(choferPerfilData.ciudadBase || "Asunción").split(' (')[0];
+                                linkGmaps = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(cBase)}&destination=${encodeURIComponent(destinoTxt)}&waypoints=${encodeURIComponent(origenTxt)}`;
+                            } catch(e) {}
 
-                            let textoWpp = `Hola ${vCliente}, sobre tu viaje de ${origenLimpio} a ${destinoLimpio} el ${fechaLegible}. Soy el chofer ${vNombreChofer} (${vVehiculo}). Mi tarifa es de ${miOferta ? miOferta.precio : 'a convenir'}. ¿Acordamos?`;
-                            let linkWppDirecto = `https://wa.me/595${vTelefonoStr}?text=${encodeURIComponent(textoWpp)}`;
-
-                            let botonesAcciones = "";
-                            let badgeHTML = "";
-
-                            if (esMio) {
-                                badgeHTML = `<span class="etiqueta verde">Viaje Acordado</span>`;
-                                botonesAcciones = `
-                                    <div class="grid-2">
-                                        <button class="btn btn-outline" onclick="window.open('${linkGmaps}', '_blank')">🗺️ GPS Ruta</button>
-                                        <button class="btn btn-success" onclick="window.open('${linkWppDirecto}', '_blank')">💬 WhatsApp</button>
-                                    </div>
-                                    <button class="btn btn-primary" style="margin-top:10px;" onclick="finalizarViaje('${v.id}')">Marcar Viaje como Terminado</button>
-                                `;
-                            } else {
-                                badgeHTML = `<span class="etiqueta">Buscando Chofer</span>`;
-                                let alertaRetorno = esMatchRetorno ? `<div class="alerta-retorno">Pasajero para tu retorno desde ${origenLimpio}</div>` : "";
-                                
-                                botonesAcciones = `
-                                    ${alertaRetorno}
-                                    <div class="caja-tarifa">
-                                        <label>Ofrecer mi Tarifa (Gs.)</label>
-                                        <input type="number" id="precio-${v.id}" class="input-grande" placeholder="Ej: 150000" value="${miOferta ? miOferta.precio.replace(/[^0-9]/g, '') : ''}">
-                                        <button class="btn btn-primary" onclick="enviarOfertaPrecio('${v.id}')">Enviar Propuesta</button>
-                                    </div>
-                                    
-                                    <div class="grid-2" style="margin-top:15px;">
-                                        <button class="btn btn-outline" onclick="window.open('${linkGmaps}', '_blank')">Ver en Mapa</button>
-                                        <button class="btn btn-success" onclick="window.open('${linkWppDirecto}', '_blank')">WhatsApp</button>
-                                    </div>
-                                    
-                                    <hr class="divisor">
-                                    
-                                    <div class="grid-2">
-                                        <button class="btn btn-danger-outline" onclick="descartarViaje('${v.id}')">Ocultar</button>
-                                        <button class="btn btn-outline" style="color:var(--text-main); border-color:var(--text-main);" onclick="confirmarAcuerdo('${v.id}')">Tomar Viaje</button>
-                                    </div>
-                                `;
-                            }
-
-                            let bloqueHTML = `
-                            <div class="${claseCard}">
-                                <h4 class="ruta-titulo">
-                                    <span>Ruta Solicitada:</span>
-                                    De: ${origenLimpio} <br> A: ${destinoLimpio}
-                                </h4>
-                                
-                                <div class="info-grupo">
-                                    <div class="info-item"><strong>Fecha:</strong> ${fechaLegible}</div>
-                                    <div class="info-item"><strong>Pasajeros:</strong> ${v.pasajeros || 1} persona(s)</div>
-                                    <div class="info-item"><strong>Cliente:</strong> ${vCliente}</div>
-                                    <div class="info-item"><strong>Estado:</strong> ${badgeHTML}</div>
+                            let btnNormal = !esMio ? `
+                                <div class="caja-tarifa">
+                                    <input type="number" id="precio-${v.id}" placeholder="Tu Tarifa Propuesta (Gs.)" value="${miOferta ? miOferta.precio.replace(/[^0-9]/g, '') : ''}">
+                                    <button class="btn btn-primary" onclick="enviarOfertaPrecio('${v.id}')">Enviar Propuesta</button>
                                 </div>
-                                
-                                ${botonesAcciones}
+                                <div class="grid-2" style="margin-top:10px;">
+                                    <button class="btn btn-outline" onclick="descartarViaje('${v.id}')">Ocultar</button>
+                                    <button class="btn btn-outline" style="border-color:white;" onclick="confirmarAcuerdo('${v.id}')">Tomar Viaje</button>
+                                </div>` : `<button class="btn btn-primary" style="margin-top:15px;" onclick="finalizarViaje('${v.id}')">Marcar Viaje como Finalizado</button>`;
+
+                            html += `
+                            <div class="viaje-card ${esMio ? 'asignado' : ''}">
+                                <h3 style="margin:0 0 10px 0;">De: ${origenTxt}<br>A: ${destinoTxt}</h3>
+                                <p style="margin:0 0 5px 0; font-size:0.9rem;">Pasajero: <strong>${v.cliente || 'Pasajero'}</strong> | Pasajeros: <strong>${v.pasajeros || 1}</strong></p>
+                                <p style="margin:0 0 15px 0; color:var(--text-muted); font-size:0.85rem;">Fecha: ${v.fecha || 'N/A'}</p>
+                                <div class="grid-2">
+                                    <button class="btn btn-outline" onclick="window.open('${linkGmaps}')">📍 Mapa</button>
+                                    <button class="btn btn-success" onclick="window.open('${linkWpp}')">💬 Chat Pasajero</button>
+                                </div>
+                                ${btnNormal}
                             </div>`;
-
-                            if (esMio) {
-                                htmlMisViajes += bloqueHTML;
-                            } else if (esMatchRetorno) {
-                                htmlRetornos += bloqueHTML; 
-                            } else {
-                                htmlNormal += bloqueHTML;
-                            }
-
-                        } catch (error) { console.error("Error protegido en viaje:", error); }
+                        } catch (error) { console.error("Error en tarjeta:", error); }
                     });
-
-                    let finalView = "";
-                    if(htmlMisViajes) finalView += `<h4 style="color:white; margin-bottom: 10px;">Tus Viajes Asignados:</h4>` + htmlMisViajes;
-                    if(htmlRetornos) finalView += `<h4 style="color:#e879f9; margin-bottom: 10px;">Oportunidades de Retorno:</h4>` + htmlRetornos;
-                    if(htmlNormal) finalView += `<h4 style="color:white; margin-bottom: 10px;">Otras Solicitudes:</h4>` + htmlNormal;
-                    
-                    if(!finalView) finalView = "<p style='color:var(--text-muted); text-align:center;'>Bolsa vacía por el momento.</p>";
-                    document.getElementById('contenedor-viajes-chofer').innerHTML = finalView;
-
-                } else { 
-                    document.getElementById('contenedor-viajes-chofer').innerHTML = "<p style='color:var(--text-muted); text-align:center;'>Bolsa vacía por el momento.</p>"; 
                 }
+                document.getElementById('contenedor-viajes-chofer').innerHTML = html || "<p style='text-align:center;'>No hay solicitudes en la zona.</p>";
             });
         }
     </script>

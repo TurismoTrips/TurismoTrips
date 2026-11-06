@@ -33,11 +33,11 @@
         .form-group label { display: block; margin-bottom: 4px; font-size: 0.8rem; color: var(--text-muted); font-weight: bold; }
         .form-group input[type="text"], .form-group input[type="tel"], .form-group select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: #020617; color: white; box-sizing: border-box; outline:none; }
 
-        /* DISEÑO DE FLYER TIPO WHATSAPP ESTADO CON IA Y PAQUETES */
+        /* CORRECCIÓN: Fondo completo nítido y sin barras negras */
         .flayer-container { width: 100%; max-width: 400px; margin: 0 auto; border-radius: 12px; overflow: hidden; position: relative; background: #111; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: white;}
-        .flayer-bg { width: 100%; height: 100%; position: absolute; top: 0; left: 0; object-fit: contain; background-color: #111; z-index: 1; }
+        .flayer-bg { width: 100%; height: 100%; position: absolute; top: 0; left: 0; object-fit: cover; z-index: 1; filter: brightness(1.05); }
         
-        .flayer-overlay { position: relative; z-index: 2; background: linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.95) 100%); padding: 20px; display:flex; flex-direction:column; height: 500px; box-sizing: border-box;}
+        .flayer-overlay { position: relative; z-index: 2; background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 45%, rgba(0,0,0,0.85) 100%); padding: 20px; display:flex; flex-direction:column; height: 500px; box-sizing: border-box;}
         
         .flayer-title { font-size: 1.8rem; font-weight: 900; line-height: 1.1; text-transform: uppercase; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
         .flayer-title span { color: #fbbf24; } 

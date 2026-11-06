@@ -40,7 +40,9 @@
         /* DISEÑO PREMIUM CALCADO TIPO AGENCIA CON IA */
         .flayer-container { width: 100%; max-width: 400px; margin: 0 auto; border-radius: 12px; overflow: hidden; position: relative; background: #111; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: white;}
         .flayer-bg { width: 100%; height: 100%; position: absolute; top: 0; left: 0; object-fit: cover; z-index: 1; opacity: 0.85; }
-        .flayer-overlay { position: relative; z-index: 2; background: linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.2) 35%, rgba(0,0,0,0.95) 100%); padding: 25px 20px; display:flex; flex-direction:column; height: 500px; box-sizing: border-box;}
+        
+        /* AQUI ACLARAMOS EL FONDO PARA QUE EL AUTO RESALTE MÁS */
+        .flayer-overlay { position: relative; z-index: 2; background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.0) 40%, rgba(0,0,0,0.9) 100%); padding: 25px 20px; display:flex; flex-direction:column; height: 500px; box-sizing: border-box;}
         
         .flayer-title { font-size: 2.2rem; font-weight: 900; line-height: 1; text-transform: uppercase; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
         .flayer-title span { color: #fbbf24; } /* Amarillo Premium */
@@ -132,7 +134,7 @@
                     <div class="flayer-driver-info">
                         <p class="flayer-driver-name" id="promo-nombre">Conductor</p>
                         <p class="flayer-driver-car" id="promo-auto">Vehículo</p>
-                        <span style="font-size:0.8rem; background:#334155; padding:3px 10px; border-radius:6px; font-weight:bold;" id="promo-chapa">CHAPA: N/A</span>
+                        <!-- AQUI SE ELIMINÓ LA CHAPA PARA PRIVACIDAD DEL CHOFER -->
                     </div>
                     
                     <div class="flayer-bottom-bar">
@@ -154,12 +156,28 @@
         </div>
     </div>
 
+    <!-- NUEVO: MODAL QR INDEPENDIENTE -->
+    <div id="modal-qr-independiente" class="modal-overlay">
+        <div class="modal-content" style="text-align: center;">
+            <h3 style="color:white; margin: 0 0 15px 0;">Tu Código QR</h3>
+            <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">
+                Imprime este código o muéstralo a tus pasajeros. Al escanearlo, irán directo a TurismoTrips para pedir un viaje.
+            </p>
+            <div style="background: white; padding: 20px; border-radius: 12px; display: inline-block; box-shadow: 0 5px 15px rgba(0,0,0,0.5); margin-bottom: 20px;">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://turismotrips.github.io/TurismoTrips/&margin=1" alt="QR Code" style="display: block;">
+            </div>
+            <button class="btn btn-outline" style="width: 100%;" onclick="cerrarModalQRIndependiente()">Cerrar</button>
+        </div>
+    </div>
+
     <div class="container">
         <div class="header-panel">
             <h2 id="panel-nombre-chofer" style="margin:0; font-size:1.4rem;">Mi Panel</h2>
             <div class="header-acciones">
                 <button class="btn btn-outline" onclick="abrirModalPerfil()">⚙️ Perfil</button>
                 <button class="btn btn-primary" style="background:var(--success); border:none;" onclick="abrirModalQR()">📢 Mi Publicidad</button>
+                <!-- AQUI SE AGREGÓ EL BOTÓN DEL QR INDEPENDIENTE -->
+                <button class="btn btn-primary" style="background:#8b5cf6; border:none;" onclick="abrirModalQRIndependiente()">🔲 Mi QR</button>
                 <button class="btn btn-outline" onclick="restaurarDescartados()">🔄 Recargar</button>
                 <button class="btn btn-outline" style="color:#f87171;" onclick="cerrarSesion()">Salir</button>
             </div>
@@ -186,6 +204,10 @@
 
         window.abrirModalQR = function() { document.getElementById('modal-qr').classList.add('activo'); }
         window.cerrarModalQR = function() { document.getElementById('modal-qr').classList.remove('activo'); }
+        
+        // FUNCIONES PARA ABRIR Y CERRAR EL QR INDEPENDIENTE
+        window.abrirModalQRIndependiente = function() { document.getElementById('modal-qr-independiente').classList.add('activo'); }
+        window.cerrarModalQRIndependiente = function() { document.getElementById('modal-qr-independiente').classList.remove('activo'); }
 
         window.descargarFlyer = function() {
             const btn = document.getElementById('btn-descargar-flyer');
@@ -310,7 +332,7 @@
             let vehiculoStr = choferPerfilData.vehiculo || 'Vehículo';
             let colorStr = choferPerfilData.color || '';
             document.getElementById('promo-auto').innerText = `${vehiculoStr} • ${colorStr}`;
-            document.getElementById('promo-chapa').innerText = `CHAPA: ${choferPerfilData.chapa || 'N/A'}`;
+            
             document.getElementById('promo-zona').innerText = "📍 " + (choferPerfilData.ciudadBase || "Paraguay");
             document.getElementById('promo-tel').innerText = choferPerfilData.telefono || "Contacto";
 
@@ -320,9 +342,8 @@
                 // Si el chofer subió su propia foto
                 imgElement.src = choferPerfilData.fotoVehiculo;
             } else {
-                // INTEGRACIÓN DE INTELIGENCIA ARTIFICIAL (Gratis, automática)
-                // Le pide a la IA que genere una foto realista del modelo y color exacto en una ruta.
-                let promptIA = `Professional photography of a ${vehiculoStr} car, color ${colorStr}, driving on a scenic mountain highway, beautiful landscape, clear daylight, 8k resolution, photorealistic`;
+                // SE MEJORÓ EL PROMPT DE LA IA (Bright, high exposure, studio lighting, sunny day) PARA MAS CLARIDAD
+                let promptIA = `Bright, high exposure professional photography of a ${vehiculoStr} car, color ${colorStr}, driving on a scenic highway, beautiful landscape, sunny day, studio lighting, 8k resolution, photorealistic`;
                 imgElement.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(promptIA)}?width=600&height=800&nologo=true`;
             }
         }
@@ -379,7 +400,6 @@
                             let vChapa = String(choferPerfilData.chapa || 'Sin Chapa');
                             let miOferta = (v.ofertas && v.ofertas[choferUid]) ? v.ofertas[choferUid] : null;
 
-                            // VARIABLES RECUPERADAS PARA LAS FECHAS Y CLIMA
                             let fechaPeticion = v.fecha_peticion || v.timestamp || "Reciente"; 
                             let fechaViaje = v.fecha || "A coordinar";
                             let climaPronostico = v.clima || "🌤️ Despejado / Buen clima";
@@ -403,7 +423,6 @@
                                     <button class="btn btn-outline" style="border-color:white;" onclick="confirmarAcuerdo('${v.id}')">Tomar Viaje</button>
                                 </div>` : `<button class="btn btn-primary" style="margin-top:15px; width:100%;" onclick="finalizarViaje('${v.id}')">Marcar Viaje como Finalizado</button>`;
 
-                            // AQUI SE AGREGA LA CAJA CON FECHAS Y CLIMA SIN BORRAR NADA MÁS
                             html += `
                             <div class="viaje-card ${esMio ? 'asignado' : ''}">
                                 <h3 style="margin:0 0 10px 0; color:var(--primary);">De: ${origenTxt}<br>A: ${destinoTxt}</h3>

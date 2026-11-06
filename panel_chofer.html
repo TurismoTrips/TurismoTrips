@@ -32,36 +32,30 @@
         .form-group { margin-bottom: 12px; text-align: left; }
         .form-group label { display: block; margin-bottom: 4px; font-size: 0.8rem; color: var(--text-muted); font-weight: bold; }
         .form-group input[type="text"], .form-group input[type="tel"], .form-group select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: #020617; color: white; box-sizing: border-box; outline:none; }
-        
-        .file-upload-wrapper { position: relative; width: 100%; height: 45px; border: 1px dashed var(--primary); border-radius: 8px; background: rgba(14, 165, 233, 0.1); display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; }
-        .file-upload-wrapper input[type="file"] { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-        .file-upload-text { color: var(--primary); font-weight: bold; font-size: 0.85rem; pointer-events: none;}
 
-        /* DISEÑO PREMIUM MEJORADO PARA QUE EL COCHE SE VEA COMPLETO */
+        /* DISEÑO DE FLYER TIPO WHATSAPP ESTADO CON IA Y PAQUETES */
         .flayer-container { width: 100%; max-width: 400px; margin: 0 auto; border-radius: 12px; overflow: hidden; position: relative; background: #111; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: white;}
-        
-        /* CAMBIO CLAVE: Usamos 'contain' y fondo seguro para que el coche no se corte nunca */
         .flayer-bg { width: 100%; height: 100%; position: absolute; top: 0; left: 0; object-fit: contain; background-color: #111; z-index: 1; }
         
-        .flayer-overlay { position: relative; z-index: 2; background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.92) 100%); padding: 25px 20px; display:flex; flex-direction:column; height: 500px; box-sizing: border-box;}
+        .flayer-overlay { position: relative; z-index: 2; background: linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.95) 100%); padding: 20px; display:flex; flex-direction:column; height: 500px; box-sizing: border-box;}
         
-        .flayer-title { font-size: 2.2rem; font-weight: 900; line-height: 1; text-transform: uppercase; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
-        .flayer-title span { color: #fbbf24; } /* Amarillo Premium */
-        .flayer-subtitle { font-size: 1.05rem; font-weight: 600; margin: 5px 0 15px 0; border-bottom: 2px solid #fbbf24; padding-bottom: 10px; display:inline-block; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);}
+        .flayer-title { font-size: 1.8rem; font-weight: 900; line-height: 1.1; text-transform: uppercase; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
+        .flayer-title span { color: #fbbf24; } 
+        .flayer-subtitle { font-size: 0.95rem; font-weight: 600; margin: 4px 0 10px 0; border-bottom: 2px solid #fbbf24; padding-bottom: 6px; display:inline-block; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);}
         
-        .flayer-features { margin-top: auto; margin-bottom: 20px; background: rgba(0,0,0,0.65); padding: 12px 15px; border-radius: 8px; width: fit-content; border-left: 3px solid #fbbf24; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
-        .flayer-features p { margin: 6px 0; font-size: 0.9rem; font-weight: bold; }
-        .flayer-features p::before { content: '✓'; color: #fbbf24; margin-right: 8px; font-size: 1.1rem; font-weight: 900;}
+        .flayer-features { margin-top: auto; margin-bottom: 10px; background: rgba(0,0,0,0.7); padding: 10px 12px; border-radius: 8px; width: fit-content; border-left: 3px solid #fbbf24; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
+        .flayer-features p { margin: 4px 0; font-size: 0.85rem; font-weight: bold; }
+        .flayer-features p::before { content: '✓'; color: #fbbf24; margin-right: 6px; font-size: 1rem; font-weight: 900;}
         
-        .flayer-driver-info { text-align: center; margin-bottom: 15px; }
-        .flayer-driver-name { font-size: 1.3rem; font-weight: bold; margin:0; text-transform: uppercase;}
-        .flayer-driver-car { color: #fbbf24; font-size: 1rem; font-weight: bold; margin: 2px 0 6px 0; }
+        .flayer-driver-info { text-align: center; margin-bottom: 10px; }
+        .flayer-driver-name { font-size: 1.2rem; font-weight: bold; margin:0; text-transform: uppercase;}
+        .flayer-driver-car { color: #fbbf24; font-size: 0.95rem; font-weight: bold; margin: 2px 0; }
         
-        .flayer-bottom-bar { display: flex; align-items: center; justify-content: space-between; background: #000; padding: 12px; border-radius: 10px; border: 1px solid #333; box-shadow: 0 -5px 15px rgba(0,0,0,0.5);}
-        .flayer-qr { width: 75px; height: 75px; border-radius: 6px; background: white; padding: 3px;}
+        .flayer-bottom-bar { display: flex; align-items: center; justify-content: space-between; background: #000; padding: 10px; border-radius: 10px; border: 1px solid #333; box-shadow: 0 -5px 15px rgba(0,0,0,0.5);}
+        .flayer-qr { width: 65px; height: 65px; border-radius: 6px; background: white; padding: 2px;}
         .flayer-contact { text-align: right; }
-        .flayer-contact-btn { background: #fbbf24; color: #000; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 900; margin-bottom: 6px; display: inline-block; text-transform: uppercase;}
-        .flayer-contact-phone { font-size: 1.1rem; font-weight: bold; }
+        .flayer-contact-btn { background: #fbbf24; color: #000; padding: 5px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 900; margin-bottom: 4px; display: inline-block; text-transform: uppercase;}
+        .flayer-contact-phone { font-size: 1rem; font-weight: bold; }
 
         #toast-notification { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%) translateY(100px); background: #334155; color: white; border: 1px solid #475569; padding: 14px 24px; border-radius: 30px; font-weight: 600; font-size: 0.95rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); opacity: 0; transition: all 0.3s ease-in-out; z-index: 2000; text-align: center; width: 90%; max-width: 400px; pointer-events: none;}
         #toast-notification.activo { transform: translateX(-50%) translateY(0); opacity: 1; }
@@ -84,14 +78,6 @@
                 <div class="form-group"><label>Color del Auto</label><input type="text" id="edit-color" placeholder="Ej: Gris"></div>
                 <div class="form-group"><label>Número de Chapa</label><input type="text" id="edit-chapa" placeholder="Ej: AAA1234"></div>
             </div>
-
-            <div class="form-group">
-                <label>Foto del Auto (Opcional - Si no subes, se usará diseño oficial)</label>
-                <div class="file-upload-wrapper">
-                    <span class="file-upload-text" id="edit-foto-texto">📸 Tocar para elegir de la Galería</span>
-                    <input type="file" id="edit-foto-archivo" accept="image/*" onchange="mostrarNombreArchivoEdit('edit-foto-archivo', 'edit-foto-texto')">
-                </div>
-            </div>
             
             <div class="form-group"><label>Ciudad Base</label>
                 <select id="edit-ciudad">
@@ -112,23 +98,23 @@
         </div>
     </div>
 
-    <!-- MODAL FLYER PUBLICITARIO (NUEVO DISEÑO PREMIUM) -->
+    <!-- MODAL FLYER PUBLICITARIO (IA + PAQUETES) -->
     <div id="modal-qr" class="modal-overlay">
         <div class="modal-content" style="background:transparent; border:none; box-shadow:none; padding:0;">
             
             <div id="flyer-exportable" class="flayer-container">
-                <!-- Imagen de fondo generada por IA o subida -->
+                <!-- Imagen generada automáticamente por IA -->
                 <img id="promo-foto-img" src="" class="flayer-bg" crossorigin="anonymous">
                 
                 <div class="flayer-overlay">
                     <div style="flex-grow: 1;">
-                        <h1 class="flayer-title">VIAJES <span>PRIVADOS</span></h1>
-                        <div class="flayer-subtitle">Turismo & Escapadas de Fin de Semana</div>
+                        <h1 class="flayer-title">VIAJES LARGOS <span>Y CORTOS</span></h1>
+                        <div class="flayer-subtitle">Turismo & Envíos de Paquetes 📦</div>
                         
                         <div class="flayer-features">
                             <p>Servicio Puerta a Puerta</p>
                             <p>Comodidad y Seguridad</p>
-                            <p>Viajes a Larga Distancia</p>
+                            <p>Encomiendas y Envíos Seguros</p>
                         </div>
                     </div>
 
@@ -142,7 +128,7 @@
                         <div class="flayer-contact">
                             <div class="flayer-contact-btn">¡HACÉ TU RESERVA!</div>
                             <div class="flayer-contact-phone">📱 <span id="promo-tel">+595</span></div>
-                            <div style="font-size:0.75rem; color:#94a3b8; margin-top:3px;" id="promo-zona">📍 Base: Paraguay</div>
+                            <div style="font-size:0.75rem; color:#94a3b8; margin-top:2px;" id="promo-zona">📍 Base: Paraguay</div>
                         </div>
                     </div>
                 </div>
@@ -188,11 +174,10 @@
     <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-storage-compat.js"></script>
     <script>
         const firebaseConfig = { apiKey: "AIzaSyAg6rZnqUFgTcRiAHA0AWvYR-imovVb_0s", authDomain: "gestorinmobiliario-d68b3.firebaseapp.com", projectId: "gestorinmobiliario-d68b3", databaseURL: "https://gestorinmobiliario-d68b3-default-rtdb.firebaseio.com", storageBucket: "gestorinmobiliario-d68b3.appspot.com" };
         if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-        const db = firebase.database(); const auth = firebase.auth(); const storage = firebase.storage();
+        const db = firebase.database(); const auth = firebase.auth();
         let choferPerfilData = null;
 
         window.mostrarNotificacion = function(mensaje) {
@@ -237,42 +222,11 @@
             document.getElementById('edit-vehiculo').value = choferPerfilData.vehiculo || "";
             document.getElementById('edit-color').value = choferPerfilData.color || "";
             document.getElementById('edit-chapa').value = choferPerfilData.chapa || "";
-            document.getElementById('edit-foto-texto').innerText = "📸 Tocar para elegir nueva foto"; 
             if(choferPerfilData.ciudadBase) document.getElementById('edit-ciudad').value = choferPerfilData.ciudadBase;
             document.getElementById('modal-perfil').classList.add('activo');
         }
 
         window.cerrarModalPerfil = function() { document.getElementById('modal-perfil').classList.remove('activo'); }
-        window.mostrarNombreArchivoEdit = function(inputId, textoId) {
-            const file = document.getElementById(inputId).files[0];
-            if(file) document.getElementById(textoId).innerText = "✅ " + file.name;
-        }
-
-        function comprimirImagen(file, maxWidth, maxHeight, quality) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = event => {
-                    const img = new Image();
-                    img.src = event.target.result;
-                    img.onload = () => {
-                        let width = img.width;
-                        let height = img.height;
-                        if (width > height) {
-                            if (width > maxWidth) { height *= maxWidth / width; width = maxWidth; }
-                        } else {
-                            if (height > maxHeight) { width *= maxHeight / height; height = maxHeight; }
-                        }
-                        const canvas = document.createElement('canvas');
-                        canvas.width = width; canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        canvas.toBlob(blob => { resolve(blob); }, 'image/jpeg', quality);
-                    };
-                    img.error = err => reject(err);
-                };
-            });
-        }
 
         window.guardarPerfil = async function() {
             const user = auth.currentUser;
@@ -283,30 +237,15 @@
             btn.disabled = true;
 
             try {
-                let fotoUrlGuardada = choferPerfilData.fotoVehiculo || "";
-                const archivoNuevo = document.getElementById('edit-foto-archivo').files[0];
-                
-                if (archivoNuevo) {
-                    btn.innerText = "Comprimiendo foto... ⏳";
-                    const blobComprimido = await comprimirImagen(archivoNuevo, 800, 800, 0.7);
-                    
-                    btn.innerText = "Subiendo foto... ⏳";
-                    const storageRef = storage.ref(`autos_choferes/${user.uid}_foto.jpg`);
-                    const snapshot = await storageRef.put(blobComprimido);
-                    fotoUrlGuardada = await snapshot.ref.getDownloadURL();
-                }
-
                 const datosActualizados = {
                     nombre: document.getElementById('edit-nombre').value.trim(),
                     telefono: document.getElementById('edit-tel').value.trim(),
                     vehiculo: document.getElementById('edit-vehiculo').value.trim(),
                     color: document.getElementById('edit-color').value.trim() || "No especificado",
                     chapa: document.getElementById('edit-chapa').value.trim() || "En trámite",
-                    fotoVehiculo: fotoUrlGuardada,
                     ciudadBase: document.getElementById('edit-ciudad').value
                 };
 
-                btn.innerText = "Guardando datos... ⏳";
                 await db.ref(`choferes_turismo/${user.uid}`).update(datosActualizados);
                 choferPerfilData = { ...choferPerfilData, ...datosActualizados };
                 
@@ -335,13 +274,8 @@
             document.getElementById('promo-tel').innerText = choferPerfilData.telefono || "Contacto";
 
             let imgElement = document.getElementById('promo-foto-img');
-
-            if(choferPerfilData.fotoVehiculo && choferPerfilData.fotoVehiculo.trim() !== "") {
-                imgElement.src = choferPerfilData.fotoVehiculo;
-            } else {
-                let promptIA = `Wide shot studio photography, centered full car completely visible with space around, front-facing 3/4 angle view of a ${vehiculoStr} car, color ${colorStr}, driving on a scenic highway, sunny day, professional automotive photography, 8k resolution`;
-                imgElement.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(promptIA)}?width=600&height=800&nologo=true`;
-            }
+            let promptIA = `Wide shot studio photography, centered full car completely visible with space around, front-facing 3/4 angle view of a ${vehiculoStr} car, color ${colorStr}, driving on a scenic highway, sunny day, professional automotive photography, 8k resolution`;
+            imgElement.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(promptIA)}?width=600&height=800&nologo=true`;
         }
 
         auth.onAuthStateChanged(user => {
@@ -396,7 +330,6 @@
                             let vChapa = String(choferPerfilData.chapa || 'Sin Chapa');
                             let miOferta = (v.ofertas && v.ofertas[choferUid]) ? v.ofertas[choferUid] : null;
 
-                            // FORMATEAR FECHA DE SOLICITUD (Convierte milisegundos a fecha legible)
                             let fechaPeticionRaw = v.fecha_peticion || v.timestamp;
                             let fechaPeticionFormateada = "Reciente";
                             if (fechaPeticionRaw) {
@@ -408,7 +341,6 @@
                                 }
                             }
 
-                            // FORMATEAR DÍA DEL VIAJE (Añade el nombre del día de la semana, ej: "Viernes, 2026-11-09")
                             let fechaViajeRaw = v.fecha || "";
                             let fechaViajeFormateada = fechaViajeRaw || "A coordinar";
                             if (fechaViajeRaw) {

@@ -12,10 +12,6 @@
         .form-group label { display: block; margin-bottom: 4px; font-size: 0.85rem; color: var(--text-muted); }
         .form-group input[type="text"], .form-group input[type="tel"], .form-group input[type="email"], .form-group input[type="password"], .form-group select { width: 100%; padding: 11px; border-radius: 8px; border: 1px solid var(--border); background: #020617; color: white; box-sizing: border-box; outline:none;}
         
-        .file-upload-wrapper { position: relative; width: 100%; height: 45px; border: 1px dashed var(--primary); border-radius: 8px; background: rgba(2, 132, 199, 0.1); display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; }
-        .file-upload-wrapper input[type="file"] { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-        .file-upload-text { color: var(--primary); font-weight: bold; font-size: 0.9rem; pointer-events: none;}
-        
         .btn-primary { background: var(--primary); color: white; border: none; padding: 13px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px;}
         .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
         .tab { flex: 1; padding: 10px; text-align: center; background: transparent; border: 1px solid var(--border); color: var(--text-muted); border-radius: 8px; cursor: pointer; }
@@ -47,14 +43,6 @@
                 <div class="form-group"><label>Color del Auto</label><input type="text" id="reg-color" placeholder="Ej: Plata / Rojo"></div>
                 <div class="form-group"><label>N° de Chapa</label><input type="text" id="reg-chapa" placeholder="Ej: AA123BB"></div>
             </div>
-
-            <div class="form-group">
-                <label>Foto del Auto (Para tu publicidad)</label>
-                <div class="file-upload-wrapper">
-                    <span class="file-upload-text" id="reg-foto-texto">📸 Tocar para elegir de la Galería</span>
-                    <input type="file" id="reg-foto-archivo" accept="image/*" onchange="mostrarNombreArchivo('reg-foto-archivo', 'reg-foto-texto')">
-                </div>
-            </div>
             
             <div class="form-group"><label>Ciudad Base</label>
                 <select id="reg-ciudad">
@@ -78,7 +66,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-storage-compat.js"></script>
 
     <script>
         const firebaseConfig = {
@@ -89,19 +76,13 @@
             storageBucket: "gestorinmobiliario-d68b3.appspot.com"
         };
         if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-        const auth = firebase.auth(); const db = firebase.database(); const storage = firebase.storage();
+        const auth = firebase.auth(); const db = firebase.database();
 
         function switchTab(tab) {
             document.getElementById('form-login').style.display = tab === 'login' ? 'block' : 'none';
             document.getElementById('form-register').style.display = tab === 'register' ? 'block' : 'none';
             document.getElementById('tab-login').className = tab === 'login' ? 'tab active' : 'tab';
             document.getElementById('tab-register').className = tab === 'register' ? 'tab active' : 'tab';
-        }
-
-        function mostrarNombreArchivo(inputId, textoId) {
-            const file = document.getElementById(inputId).files[0];
-            if(file) document.getElementById(textoId).innerText = "✅ " + file.name;
-            else document.getElementById(textoId).innerText = "📸 Tocar para elegir de la Galería";
         }
 
         function login() {
@@ -118,21 +99,12 @@
             
             if(!nombre || !email || !pass) return alert("Complete los datos básicos.");
 
-            btn.innerText = "Subiendo imagen y creando cuenta... ⏳";
+            btn.innerText = "Creando cuenta... ⏳";
             btn.disabled = true;
 
             try {
                 const userCred = await auth.createUserWithEmailAndPassword(email, pass);
                 const uid = userCred.user.uid;
-
-                let fotoUrl = "";
-                const archivoFoto = document.getElementById('reg-foto-archivo').files[0];
-                
-                if (archivoFoto) {
-                    const storageRef = storage.ref(`autos_choferes/${uid}_${archivoFoto.name}`);
-                    const snapshot = await storageRef.put(archivoFoto);
-                    fotoUrl = await snapshot.ref.getDownloadURL();
-                }
 
                 const data = {
                     nombre: nombre,
@@ -140,7 +112,6 @@
                     vehiculo: document.getElementById('reg-vehiculo').value,
                     color: document.getElementById('reg-color').value || "No especificado",
                     chapa: document.getElementById('reg-chapa').value || "En trámite",
-                    fotoVehiculo: fotoUrl,
                     ciudadBase: document.getElementById('reg-ciudad').value
                 };
 

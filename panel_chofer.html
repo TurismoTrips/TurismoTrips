@@ -339,7 +339,6 @@
             if(choferPerfilData.fotoVehiculo && choferPerfilData.fotoVehiculo.trim() !== "") {
                 imgElement.src = choferPerfilData.fotoVehiculo;
             } else {
-                // PROMPT MEJORADO: Plano general centrado, vista frontal de 3/4 para que el auto se vea completo y estético
                 let promptIA = `Wide shot studio photography, centered full car completely visible with space around, front-facing 3/4 angle view of a ${vehiculoStr} car, color ${colorStr}, driving on a scenic highway, sunny day, professional automotive photography, 8k resolution`;
                 imgElement.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(promptIA)}?width=600&height=800&nologo=true`;
             }
@@ -397,11 +396,33 @@
                             let vChapa = String(choferPerfilData.chapa || 'Sin Chapa');
                             let miOferta = (v.ofertas && v.ofertas[choferUid]) ? v.ofertas[choferUid] : null;
 
-                            let fechaPeticion = v.fecha_peticion || v.timestamp || "Reciente"; 
-                            let fechaViaje = v.fecha || "A coordinar";
+                            // FORMATEAR FECHA DE SOLICITUD (Convierte milisegundos a fecha legible)
+                            let fechaPeticionRaw = v.fecha_peticion || v.timestamp;
+                            let fechaPeticionFormateada = "Reciente";
+                            if (fechaPeticionRaw) {
+                                let d = !isNaN(fechaPeticionRaw) ? new Date(Number(fechaPeticionRaw)) : new Date(fechaPeticionRaw);
+                                if (!isNaN(d.getTime())) {
+                                    fechaPeticionFormateada = d.toLocaleString('es-PY', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                                } else {
+                                    fechaPeticionFormateada = fechaPeticionRaw;
+                                }
+                            }
+
+                            // FORMATEAR DÍA DEL VIAJE (Añade el nombre del día de la semana, ej: "Viernes, 2026-11-09")
+                            let fechaViajeRaw = v.fecha || "";
+                            let fechaViajeFormateada = fechaViajeRaw || "A coordinar";
+                            if (fechaViajeRaw) {
+                                let dViaje = new Date(fechaViajeRaw + 'T00:00:00');
+                                if (!isNaN(dViaje.getTime())) {
+                                    let nombreDia = dViaje.toLocaleDateString('es-ES', { weekday: 'long' });
+                                    nombreDia = nombreDia.charAt(0).toUpperCase() + nombreDia.slice(1);
+                                    fechaViajeFormateada = `${nombreDia}, ${fechaViajeRaw}`;
+                                }
+                            }
+
                             let climaPronostico = v.clima || "🌤️ Despejado / Buen clima";
 
-                            let textoWpp = `Hola ${v.cliente || 'Pasajero'}, sobre tu viaje de ${origenTxt} a ${destinoTxt} el ${fechaViaje}. Soy el chofer *${vNombreChofer}*. \n\n🚗 *Vehículo para tu viaje:* ${vVehiculo}\n🎨 *Color:* ${vColor}\n🔢 *Chapa:* ${vChapa}\n💰 *Tarifa:* ${miOferta ? miOferta.precio : 'a convenir'}. ¿Coordinamos?`;
+                            let textoWpp = `Hola ${v.cliente || 'Pasajero'}, sobre tu viaje de ${origenTxt} a ${destinoTxt} el ${fechaViajeFormateada}. Soy el chofer *${vNombreChofer}*. \n\n🚗 *Vehículo para tu viaje:* ${vVehiculo}\n🎨 *Color:* ${vColor}\n🔢 *Chapa:* ${vChapa}\n💰 *Tarifa:* ${miOferta ? miOferta.precio : 'a convenir'}. ¿Coordinamos?`;
                             let linkWpp = `https://wa.me/595${String(v.telefono || '').replace(/^0+/, '')}?text=${encodeURIComponent(textoWpp)}`;
                             
                             let linkGmaps = "https://www.google.com/maps";
@@ -426,8 +447,8 @@
                                 <p style="margin:0 0 10px 0; font-size:0.95rem;">Pasajero: <strong>${v.cliente || 'Pasajero'}</strong> | Pasajeros: <strong>${v.pasajeros || 1}</strong></p>
                                 
                                 <div style="background:var(--bg-base); padding:12px; border-radius:8px; border:1px solid var(--border); margin-bottom:15px;">
-                                    <p style="margin:0 0 6px 0; font-size:0.85rem; color:var(--text-muted);">📅 Solicitado: <strong>${fechaPeticion}</strong></p>
-                                    <p style="margin:0 0 6px 0; font-size:1rem; color:var(--text-main);">🚀 <strong>Día del Viaje: ${fechaViaje}</strong></p>
+                                    <p style="margin:0 0 6px 0; font-size:0.85rem; color:var(--text-muted);">📅 Solicitado: <strong>${fechaPeticionFormateada}</strong></p>
+                                    <p style="margin:0 0 6px 0; font-size:1rem; color:var(--text-main);">🚀 <strong>Día del Viaje: ${fechaViajeFormateada}</strong></p>
                                     <p style="margin:0; font-size:0.85rem; color:#fbbf24;">⛅ Pronóstico: <strong>${climaPronostico}</strong></p>
                                 </div>
 

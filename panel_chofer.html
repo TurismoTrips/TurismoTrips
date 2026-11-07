@@ -122,7 +122,8 @@
                     </div>
                     
                     <div class="flayer-bottom-bar">
-                        <img class="flayer-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://turismotrips.github.io/TurismoTrips/&margin=1" alt="QR" crossorigin="anonymous">
+                        <!-- ⚠️ QR APUNTANDO A REGISTRO -->
+                        <img class="flayer-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://turismotrips.github.io/TurismoTrips/registro.html&margin=1" alt="QR" crossorigin="anonymous">
                         <div class="flayer-contact">
                             <div class="flayer-contact-btn">¡HACÉ TU RESERVA!</div>
                             <div class="flayer-contact-phone">📱 <span id="promo-tel">+595</span></div>
@@ -140,17 +141,35 @@
         </div>
     </div>
 
-    <!-- MODAL QR INDEPENDIENTE -->
+    <!-- MODAL QR PARA IMPRESIÓN EN EL ASIENTO -->
     <div id="modal-qr-independiente" class="modal-overlay">
         <div class="modal-content" style="text-align: center;">
-            <h3 style="color:white; margin: 0 0 15px 0;">Tu Código QR</h3>
-            <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">
-                Imprime este código o muéstralo a tus pasajeros. Al escanearlo, irán directo a TurismoTrips para pedir un viaje.
+            <h3 style="color:white; margin: 0 0 5px 0;">Cartel QR para el Asiento</h3>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:15px;">
+                Imprime esto y colócalo en el asiento trasero. Al escanear, el pasajero se registrará en tu plataforma.
             </p>
-            <div style="background: white; padding: 20px; border-radius: 12px; display: inline-block; box-shadow: 0 5px 15px rgba(0,0,0,0.5); margin-bottom: 20px;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://turismotrips.github.io/TurismoTrips/&margin=1" alt="QR Code" style="display: block;">
+            
+            <div id="cartel-qr-exportable" style="background: #0f172a; padding: 20px; border-radius: 12px; border: 2px solid #0ea5e9; display: inline-block; box-shadow: 0 5px 15px rgba(0,0,0,0.5); margin-bottom: 15px; width: 100%; box-sizing: border-box;">
+                <div style="background: #ef4444; color: white; font-weight: 900; font-size: 0.85rem; padding: 4px 10px; border-radius: 20px; display: inline-block; margin-bottom: 8px; text-transform: uppercase;">
+                    🚗 Turismo & Envíos 📦
+                </div>
+                <h2 style="color: #f8fafc; font-size: 1.2rem; margin: 0 0 5px 0; text-transform: uppercase;">¿Necesitas Viajar o Enviar Paquetes?</h2>
+                <p style="color: #fbbf24; font-size: 0.9rem; margin: 0 0 15px 0; font-weight: bold;">Escanea el código y pide tu viaje al instante</p>
+                
+                <div style="background: white; padding: 15px; border-radius: 10px; display: inline-block; margin-bottom: 10px;">
+                    <!-- ⚠️ QR APUNTANDO A REGISTRO -->
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://turismotrips.github.io/TurismoTrips/registro.html&margin=1" alt="QR Code" style="display: block; width: 160px; height: 160px;" crossorigin="anonymous">
+                </div>
+                
+                <div style="color: #94a3b8; font-size: 0.8rem; margin-top: 5px;">
+                    ¡Registrate y forma parte de <strong>TurismoTrips</strong>! 🇵🇾
+                </div>
             </div>
-            <button class="btn btn-outline" style="width: 100%;" onclick="cerrarModalQRIndependiente()">Cerrar</button>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button class="btn btn-primary" id="btn-descargar-cartel" onclick="descargarCartelQR()">📥 Descargar Cartel para Imprimir</button>
+                <button class="btn btn-outline" style="width: 100%; background:var(--bg-card);" onclick="cerrarModalQRIndependiente()">Cerrar</button>
+            </div>
         </div>
     </div>
 
@@ -209,7 +228,30 @@
             }).catch(err => {
                 console.error(err);
                 btn.innerText = "📥 Descargar Imagen para Redes";
-                alert("Hubo un problema al generar la imagen. Puedes tomarle una captura de pantalla normal.");
+                alert("Hubo un problema al generar la imagen.");
+            });
+        }
+
+        window.descargarCartelQR = function() {
+            const btn = document.getElementById('btn-descargar-cartel');
+            btn.innerText = "Generando cartel... ⏳";
+            const elemento = document.getElementById("cartel-qr-exportable");
+            
+            html2canvas(elemento, { 
+                scale: 3, 
+                useCORS: true, 
+                backgroundColor: "#0f172a" 
+            }).then(canvas => {
+                let link = document.createElement('a');
+                link.download = 'Cartel_QR_Asiento_TurismoTrips.jpg';
+                link.href = canvas.toDataURL('image/jpeg', 0.95);
+                link.click();
+                btn.innerText = "📥 Descargar Cartel para Imprimir";
+                mostrarNotificacion("¡Cartel guardado para imprimir!");
+            }).catch(err => {
+                console.error(err);
+                btn.innerText = "📥 Descargar Cartel para Imprimir";
+                alert("Hubo un problema al generar el cartel.");
             });
         }
 

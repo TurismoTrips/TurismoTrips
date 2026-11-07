@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Pasajeros | TurismoTrips</title>
+    <style>
+        :root { --primary: #0ea5e9; --bg-base: #0f172a; --bg-card: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --border: #334155; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg-base); color: var(--text-main); margin: 0; padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; }
+        .card { background: var(--bg-card); padding: 30px; border-radius: 15px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid var(--border); box-sizing: border-box;}
+        
+        h1 { margin: 0 0 10px 0; color: var(--primary); font-size: 1.8rem; text-align: center;}
+        p { color: var(--text-muted); font-size: 0.95rem; text-align: center; margin-bottom: 25px; line-height: 1.4;}
+        
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 0.85rem; font-weight: bold; }
+        .form-group input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: #020617; color: white; box-sizing: border-box; font-size: 1rem; outline: none; }
+        .form-group input:focus { border-color: var(--primary); }
+        
+        .btn { width: 100%; background: var(--primary); color: white; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: bold; border: none; cursor: pointer; transition: 0.2s; margin-top: 10px;}
+        .btn:hover { background: #0284c7; }
+        
+        .info-box { background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; padding: 12px; border-radius: 8px; font-size: 0.8rem; color: #10b981; margin-top: 20px; text-align: center;}
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>TurismoTrips 🇵🇾</h1>
+        <p>Regístrate rápido y pide tu viaje largo, turismo o encomienda.</p>
+
+        <div class="form-group">
+            <label>Tu Nombre o Apodo</label>
+            <input type="text" id="pasajero-nombre" placeholder="Ej: Juan Pérez">
+        </div>
+        
+        <div class="form-group">
+            <label>WhatsApp (Sin código de país)</label>
+            <input type="tel" id="pasajero-tel" placeholder="Ej: 0981 123 456">
+        </div>
+        
+        <div class="form-group">
+            <label>Ciudad donde te encuentras</label>
+            <input type="text" id="pasajero-ciudad" placeholder="Ej: Capiatá, Central">
+        </div>
+
+        <button class="btn" id="btn-registrar" onclick="registrarPasajero()">Entrar y Pedir Viaje 🚀</button>
+        
+        <div class="info-box">
+            💡 Al registrarte, la web se guardará para que puedas entrar directamente en el futuro sin descargar ninguna App pesada.
+        </div>
+    </div>
+
+    <!-- FIREBASE COMPAT -->
+    <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-database-compat.js"></script>
+    <script>
+        const firebaseConfig = { 
+            apiKey: "AIzaSyAg6rZnqUFgTcRiAHA0AWvYR-imovVb_0s", 
+            authDomain: "gestorinmobiliario-d68b3.firebaseapp.com", 
+            projectId: "gestorinmobiliario-d68b3", 
+            databaseURL: "https://gestorinmobiliario-d68b3-default-rtdb.firebaseio.com", 
+            storageBucket: "gestorinmobiliario-d68b3.appspot.com" 
+        };
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        const db = firebase.database();
+
+        // Si ya está registrado en este celular, lo mandamos directo al inicio
+        window.onload = function() {
+            if (localStorage.getItem("pasajero_turismotrips_nombre")) {
+                window.location.href = "index.html"; 
+            }
+        };
+
+        window.registrarPasajero = function() {
+            let nombre = document.getElementById("pasajero-nombre").value.trim();
+            let tel = document.getElementById("pasajero-tel").value.trim();
+            let ciudad = document.getElementById("pasajero-ciudad").value.trim();
+
+            if (!nombre || !tel || !ciudad) {
+                alert("Por favor completa todos los campos para continuar.");
+                return;
+            }
+
+            const btn = document.getElementById('btn-registrar');
+            btn.innerText = "Registrando... ⏳";
+            btn.disabled = true;
+
+            // 1. Guardar en Base de Datos para el Panel Master
+            db.ref('pasajeros_turismo').push({
+                nombre: nombre,
+                telefono: tel,
+                ciudad: ciudad,
+                fechaRegistro: new Date().toLocaleString('es-PY')
+            }).then(() => {
+                // 2. Guardar en la Memoria del Celular del Pasajero
+                localStorage.setItem("pasajero_turismotrips_nombre", nombre);
+                localStorage.setItem("pasajero_turismotrips_tel", tel);
+                localStorage.setItem("pasajero_turismotrips_ciudad", ciudad);
+
+                // 3. Llevarlo a la página de pedir viajes (index.html)
+                window.location.href = "index.html";
+            }).catch(error => {
+                alert("Error al conectar. Intenta de nuevo.");
+                btn.innerText = "Entrar y Pedir Viaje 🚀";
+                btn.disabled = false;
+            });
+        }
+    </script>
+</body>
+</html>

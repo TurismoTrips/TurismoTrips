@@ -315,7 +315,6 @@
         window.descartarViaje = function(viajeId) { db.ref(`viajes_turismo/pendientes/${viajeId}/descartados/${auth.currentUser.uid}`).set(true); }
         window.confirmarAcuerdo = function(viajeId) { if(confirm("¿Confirmar trato con el pasajero?")) db.ref(`viajes_turismo/pendientes/${viajeId}`).update({ estado: 'Acuerdo Cerrado', choferAsignadoUid: auth.currentUser.uid }); }
         
-        // 🚀 MEJORA DE BALANCES: Al finalizar, guarda el registro en un historial antes de borrar el viaje activo
         window.finalizarViaje = function(viajeId) { 
             if(confirm("¿Marcar este viaje como completado? Esto lo registrará en el balance general.")) {
                 db.ref(`viajes_turismo/pendientes/${viajeId}`).once('value').then(snap => {
@@ -323,7 +322,6 @@
                         let viajeData = snap.val();
                         let ofertaChofer = (viajeData.ofertas && viajeData.ofertas[auth.currentUser.uid]) ? viajeData.ofertas[auth.currentUser.uid].precio : "A convenir";
                         
-                        // Guardar en el Historial Master para Balances
                         db.ref('viajes_historial').push({
                             origen: viajeData.origen,
                             destino: viajeData.destino,
@@ -338,7 +336,6 @@
                             fechaFinalizacion: new Date().toLocaleString('es-PY')
                         });
                     }
-                    // Borrar de pendientes activos
                     db.ref(`viajes_turismo/pendientes/${viajeId}`).remove();
                     mostrarNotificacion("¡Viaje finalizado y guardado en balances!");
                 });

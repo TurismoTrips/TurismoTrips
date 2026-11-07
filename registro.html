@@ -17,6 +17,9 @@
         .form-group input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: #020617; color: white; box-sizing: border-box; font-size: 1rem; outline: none; }
         .form-group input:focus { border-color: var(--primary); }
         
+        /* Modificación para el autocompletado en navegadores oscuros */
+        input::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+        
         .btn { width: 100%; background: var(--primary); color: white; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: bold; border: none; cursor: pointer; transition: 0.2s; margin-top: 10px;}
         .btn:hover { background: #0284c7; }
         
@@ -41,7 +44,72 @@
         
         <div class="form-group">
             <label>Ciudad donde te encuentras</label>
-            <input type="text" id="pasajero-ciudad" placeholder="Ej: Capiatá, Central">
+            <!-- AQUÍ ESTÁ EL CAMBIO: Input con Datalist conectada -->
+            <input list="ciudades-paraguay" id="pasajero-ciudad" placeholder="Escribe para buscar tu ciudad...">
+            
+            <datalist id="ciudades-paraguay">
+                <!-- Capital -->
+                <option value="Asunción (Capital)">
+                <!-- Central -->
+                <option value="Areguá (Central)">
+                <option value="Capiatá (Central)">
+                <option value="Fernando de la Mora (Central)">
+                <option value="Guarambaré (Central)">
+                <option value="Itá (Central)">
+                <option value="Itauguá (Central)">
+                <option value="J. Augusto Saldívar (Central)">
+                <option value="Lambaré (Central)">
+                <option value="Limpio (Central)">
+                <option value="Luque (Central)">
+                <option value="Mariano Roque Alonso (Central)">
+                <option value="Nueva Italia (Central)">
+                <option value="Ñemby (Central)">
+                <option value="San Antonio (Central)">
+                <option value="San Lorenzo (Central)">
+                <option value="Villa Elisa (Central)">
+                <option value="Villeta (Central)">
+                <option value="Ypacaraí (Central)">
+                <option value="Ypané (Central)">
+                <!-- Alto Paraná -->
+                <option value="Ciudad del Este (Alto Paraná)">
+                <option value="Hernandarias (Alto Paraná)">
+                <option value="Minga Guazú (Alto Paraná)">
+                <option value="Presidente Franco (Alto Paraná)">
+                <option value="Santa Rita (Alto Paraná)">
+                <!-- Cordillera -->
+                <option value="Caacupé (Cordillera)">
+                <option value="San Bernardino (Cordillera)">
+                <option value="Piribebuy (Cordillera)">
+                <option value="Eusebio Ayala (Cordillera)">
+                <option value="Tobatí (Cordillera)">
+                <!-- Paraguarí -->
+                <option value="Paraguarí (Paraguarí)">
+                <option value="Carapeguá (Paraguarí)">
+                <option value="Yaguarón (Paraguarí)">
+                <option value="Ybycuí (Paraguarí)">
+                <option value="Quiindy (Paraguarí)">
+                <!-- Itapúa -->
+                <option value="Encarnación (Itapúa)">
+                <option value="Cambyretá (Itapúa)">
+                <option value="Coronel Bogado (Itapúa)">
+                <option value="Hohenau (Itapúa)">
+                <!-- Caaguazú -->
+                <option value="Coronel Oviedo (Caaguazú)">
+                <option value="Caaguazú (Caaguazú)">
+                <option value="J. Eulogio Estigarribia (Caaguazú)">
+                <!-- Guairá -->
+                <option value="Villarrica (Guairá)">
+                <!-- Otros Departamentos Importantes -->
+                <option value="San Estanislao / Santaní (San Pedro)">
+                <option value="Pedro Juan Caballero (Amambay)">
+                <option value="Concepción (Concepción)">
+                <option value="Villa Hayes (Presidente Hayes)">
+                <option value="Filadelfia (Boquerón)">
+                <option value="Salto del Guairá (Canindeyú)">
+                <option value="Pilar (Ñeembucú)">
+                <option value="San Ignacio (Misiones)">
+                <option value="San Juan Bautista (Misiones)">
+            </datalist>
         </div>
 
         <button class="btn" id="btn-registrar" onclick="registrarPasajero()">Entrar y Pedir Viaje 🚀</button>
@@ -65,7 +133,7 @@
         if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.database();
 
-        // Si ya está registrado en este celular, lo mandamos directo al inicio
+        // Si ya está registrado en este celular, lo mandamos directo a la App
         window.onload = function() {
             if (localStorage.getItem("pasajero_turismotrips_nombre")) {
                 window.location.href = "index.html"; 

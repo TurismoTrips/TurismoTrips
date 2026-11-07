@@ -33,11 +33,9 @@
         .form-group label { display: block; margin-bottom: 4px; font-size: 0.8rem; color: var(--text-muted); font-weight: bold; }
         .form-group input[type="text"], .form-group input[type="tel"], .form-group select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: #020617; color: white; box-sizing: border-box; outline:none; }
 
-        /* DISEÑO ORIGINAL RESTAURADO */
         .flayer-container { width: 100%; max-width: 400px; margin: 0 auto; border-radius: 12px; overflow: hidden; position: relative; background: #111; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: white;}
         .flayer-bg { width: 100%; height: 100%; position: absolute; top: 0; left: 0; object-fit: cover; z-index: 1; filter: brightness(1.05); }
         
-        /* CORRECCIÓN DE SOMBRA: Se redujo la oscuridad, dejando un ventanal transparente enorme en el medio (del 20% al 80%) */
         .flayer-overlay { position: relative; z-index: 2; background: linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.95) 100%); padding: 20px; display:flex; flex-direction:column; height: 500px; box-sizing: border-box;}
         
         .flayer-title { font-size: 1.8rem; font-weight: 900; line-height: 1.1; text-transform: uppercase; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
@@ -283,10 +281,7 @@
             document.getElementById('promo-tel').innerText = choferPerfilData.telefono || "Contacto";
 
             let imgElement = document.getElementById('promo-foto-img');
-            
-            // PROMPT POTENCIADO: "brightly illuminated, high contrast, vibrant colors"
             let promptIA = `Realistic photography of a ${vehiculoStr}, standard compact hatchback car, painted entirely in ${colorMapeado} color, parked on a bright sunny scenic road, front three-quarter angle view showing the side profile and front grill, clear blue sky, vivid daylight, brightly illuminated, high contrast, vibrant colors, centered full car, realistic standard family car, not a sports car`;
-            
             imgElement.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(promptIA)}?width=600&height=800&nologo=true`;
         }
 
@@ -319,7 +314,36 @@
 
         window.descartarViaje = function(viajeId) { db.ref(`viajes_turismo/pendientes/${viajeId}/descartados/${auth.currentUser.uid}`).set(true); }
         window.confirmarAcuerdo = function(viajeId) { if(confirm("¿Confirmar trato con el pasajero?")) db.ref(`viajes_turismo/pendientes/${viajeId}`).update({ estado: 'Acuerdo Cerrado', choferAsignadoUid: auth.currentUser.uid }); }
-        window.finalizarViaje = function(viajeId) { if(confirm("¿Marcar este viaje como completado?")) db.ref(`viajes_turismo/pendientes/${viajeId}`).remove(); }
+        
+        // 🚀 MEJORA DE BALANCES: Al finalizar, guarda el registro en un historial antes de borrar el viaje activo
+        window.finalizarViaje = function(viajeId) { 
+            if(confirm("¿Marcar este viaje como completado? Esto lo registrará en el balance general.")) {
+                db.ref(`viajes_turismo/pendientes/${viajeId}`).once('value').then(snap => {
+                    if(snap.exists()) {
+                        let viajeData = snap.val();
+                        let ofertaChofer = (viajeData.ofertas && viajeData.ofertas[auth.currentUser.uid]) ? viajeData.ofertas[auth.currentUser.uid].precio : "A convenir";
+                        
+                        // Guardar en el Historial Master para Balances
+                        db.ref('viajes_historial').push({
+                            origen: viajeData.origen,
+                            destino: viajeData.destino,
+                            cliente: viajeData.cliente,
+                            telefonoCliente: viajeData.telefono,
+                            fechaViaje: viajeData.fecha || "No especificada",
+                            choferUid: auth.currentUser.uid,
+                            choferNombre: choferPerfilData.nombre,
+                            choferVehiculo: choferPerfilData.vehiculo,
+                            choferChapa: choferPerfilData.chapa,
+                            tarifaCobrada: ofertaChofer,
+                            fechaFinalizacion: new Date().toLocaleString('es-PY')
+                        });
+                    }
+                    // Borrar de pendientes activos
+                    db.ref(`viajes_turismo/pendientes/${viajeId}`).remove();
+                    mostrarNotificacion("¡Viaje finalizado y guardado en balances!");
+                });
+            }
+        }
 
         function cargarViajesPendientesChofer(choferUid) {
             db.ref('viajes_turismo/pendientes').on('value', (snapshot) => {

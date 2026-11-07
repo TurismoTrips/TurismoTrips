@@ -122,7 +122,7 @@
                     </div>
                     
                     <div class="flayer-bottom-bar">
-                        <!-- ⚠️ QR APUNTANDO A REGISTRO -->
+                        <!-- QR de Publicidad apuntando a registro.html -->
                         <img class="flayer-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://turismotrips.github.io/TurismoTrips/registro.html&margin=1" alt="QR" crossorigin="anonymous">
                         <div class="flayer-contact">
                             <div class="flayer-contact-btn">¡HACÉ TU RESERVA!</div>
@@ -134,40 +134,39 @@
             </div>
 
             <div style="margin-top:20px; display:flex; flex-direction:column; gap:10px; padding: 0 10px;">
-                <button class="btn btn-primary" id="btn-descargar-flyer" onclick="descargarFlyer()">📥 Descargar Imagen para Redes</button>
+                <button class="btn btn-primary" id="btn-descargar-flyer" style="background: #0ea5e9;" onclick="descargarFlyer()">📥 Descargar Imagen para Redes</button>
                 <button class="btn btn-outline" style="background:var(--bg-card);" onclick="cerrarModalQR()">Cerrar Publicidad</button>
             </div>
             
         </div>
     </div>
 
-    <!-- MODAL QR PARA IMPRESIÓN EN EL ASIENTO -->
+    <!-- MODAL QR INDEPENDIENTE PARA EL ASIENTO -->
     <div id="modal-qr-independiente" class="modal-overlay">
         <div class="modal-content" style="text-align: center;">
-            <h3 style="color:white; margin: 0 0 5px 0;">Cartel QR para el Asiento</h3>
-            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:15px;">
-                Imprime esto y colócalo en el asiento trasero. Al escanear, el pasajero se registrará en tu plataforma.
-            </p>
             
-            <div id="cartel-qr-exportable" style="background: #0f172a; padding: 20px; border-radius: 12px; border: 2px solid #0ea5e9; display: inline-block; box-shadow: 0 5px 15px rgba(0,0,0,0.5); margin-bottom: 15px; width: 100%; box-sizing: border-box;">
-                <div style="background: #ef4444; color: white; font-weight: 900; font-size: 0.85rem; padding: 4px 10px; border-radius: 20px; display: inline-block; margin-bottom: 8px; text-transform: uppercase;">
-                    🚗 Turismo & Envíos 📦
-                </div>
-                <h2 style="color: #f8fafc; font-size: 1.2rem; margin: 0 0 5px 0; text-transform: uppercase;">¿Necesitas Viajar o Enviar Paquetes?</h2>
-                <p style="color: #fbbf24; font-size: 0.9rem; margin: 0 0 15px 0; font-weight: bold;">Escanea el código y pide tu viaje al instante</p>
+            <!-- EL CARTEL QUE SE VA A DESCARGAR -->
+            <div id="cartel-qr-exportable" style="background: #0f172a; padding: 25px 20px; border-radius: 15px; border: 2px solid #0ea5e9; display: inline-block; box-shadow: 0 5px 15px rgba(0,0,0,0.5); margin-bottom: 20px; width: 100%; box-sizing: border-box;">
                 
-                <div style="background: white; padding: 15px; border-radius: 10px; display: inline-block; margin-bottom: 10px;">
-                    <!-- ⚠️ QR APUNTANDO A REGISTRO -->
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://turismotrips.github.io/TurismoTrips/registro.html&margin=1" alt="QR Code" style="display: block; width: 160px; height: 160px;" crossorigin="anonymous">
+                <h2 style="color: #f8fafc; font-size: 1.6rem; font-weight: 900; margin: 0 0 10px 0; text-transform: uppercase;">ESCANEA PARA<br><span style="color: #0ea5e9;">VIAJES LARGOS</span></h2>
+                
+                <p style="color: #fbbf24; font-size: 1rem; margin: 0 0 20px 0; font-weight: bold; text-transform: uppercase;">Turismo & Encomiendas 📦</p>
+                
+                <div style="background: white; padding: 15px; border-radius: 15px; display: inline-block; margin-bottom: 15px;">
+                    <!-- QR independiente apuntando a registro.html -->
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://turismotrips.github.io/TurismoTrips/registro.html&margin=1" alt="QR Code" style="display: block; width: 200px; height: 200px;" crossorigin="anonymous">
                 </div>
                 
-                <div style="color: #94a3b8; font-size: 0.8rem; margin-top: 5px;">
-                    ¡Registrate y forma parte de <strong>TurismoTrips</strong>! 🇵🇾
+                <div style="color: #94a3b8; font-size: 0.85rem; font-weight: bold;">
+                    TU CHOFER TE LLEVA SEGURO 🇵🇾
                 </div>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-                <button class="btn btn-primary" id="btn-descargar-cartel" onclick="descargarCartelQR()">📥 Descargar Cartel para Imprimir</button>
+            <!-- BOTONES DE DESCARGA Y CERRAR -->
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <!-- Este es el botón azul para descargar el QR, igual que el de la publicidad -->
+                <button class="btn btn-primary" id="btn-descargar-cartel" style="background: #0ea5e9; font-size: 1rem; padding: 14px;" onclick="descargarCartelQR()">📥 Descargar Cartel para Imprimir</button>
+                
                 <button class="btn btn-outline" style="width: 100%; background:var(--bg-card);" onclick="cerrarModalQRIndependiente()">Cerrar</button>
             </div>
         </div>
@@ -228,17 +227,18 @@
             }).catch(err => {
                 console.error(err);
                 btn.innerText = "📥 Descargar Imagen para Redes";
-                alert("Hubo un problema al generar la imagen.");
+                alert("Hubo un problema al generar la imagen. Puedes tomarle una captura de pantalla normal.");
             });
         }
 
+        // FUNCIÓN PARA DESCARGAR EL CARTEL DEL QR INDEPENDIENTE
         window.descargarCartelQR = function() {
             const btn = document.getElementById('btn-descargar-cartel');
             btn.innerText = "Generando cartel... ⏳";
             const elemento = document.getElementById("cartel-qr-exportable");
             
             html2canvas(elemento, { 
-                scale: 3, 
+                scale: 3, // Alta calidad para impresión
                 useCORS: true, 
                 backgroundColor: "#0f172a" 
             }).then(canvas => {
@@ -247,7 +247,7 @@
                 link.href = canvas.toDataURL('image/jpeg', 0.95);
                 link.click();
                 btn.innerText = "📥 Descargar Cartel para Imprimir";
-                mostrarNotificacion("¡Cartel guardado para imprimir!");
+                mostrarNotificacion("¡Cartel guardado en tu galería!");
             }).catch(err => {
                 console.error(err);
                 btn.innerText = "📥 Descargar Cartel para Imprimir";
